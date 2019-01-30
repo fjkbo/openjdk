@@ -1,0 +1,13 @@
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-01-30 10:44:45.335699787 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-01-30 10:44:45.115692485 +0800
+@@ -340,6 +340,10 @@
+     return !is_amd_Barcelona();
+   }
+ 
++  if (is_hygon()) {
++    return true;
++  }
++
+   return false;
+ }
+ 

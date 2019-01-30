@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<!--
+   Note to customizers: the body of the webrev is IDed as SUNWwebrev
+   to allow easy overriding by users of webrev via the userContent.css
+   mechanism available in some browsers.
+
+   For example, to have all "removed" information be red instead of
+   brown, set a rule in your userContent.css file like:
+
+       body#SUNWwebrev span.removed { color: red ! important; }
+-->
+<style type="text/css" media="screen">
+body {
+    background-color: #eeeeee;
+}
+hr {
+    border: none 0;
+    border-top: 1px solid #aaa;
+    height: 1px;
+}
+div.summary {
+    font-size: .8em;
+    border-bottom: 1px solid #aaa;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+div.summary h2 {
+    margin-bottom: 0.3em;
+}
+div.summary table th {
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+span.lineschanged {
+    font-size: 0.7em;
+}
+span.oldmarker {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+span.newmarker {
+    color: green;
+    font-size: large;
+    font-weight: bold;
+}
+span.removed {
+    color: brown;
+}
+span.changed {
+    color: blue;
+}
+span.new {
+    color: blue;
+    font-weight: bold;
+}
+a.print { font-size: x-small; }
+
+</style>
+
+<style type="text/css" media="print">
+pre { font-size: 0.8em; font-family: courier, monospace; }
+span.removed { color: #444; font-style: italic }
+span.changed { font-weight: bold; }
+span.new { font-weight: bold; }
+span.newmarker { font-size: 1.2em; font-weight: bold; }
+span.oldmarker { font-size: 1.2em; font-weight: bold; }
+a.print {display: none}
+hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
+</style>
+
+<title>jdk Sdiff src/hotspot/cpu/x86 </title>
+</head><body id="SUNWwebrev">
+<center>&lt prev <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+<h2>src/hotspot/cpu/x86/assembler_x86.cpp</h2>
+<a class="print" href="javascript:print()">Print this page</a>
+<pre></pre>
+
+<table><tr valign="top">
+<td><pre>
+
+</pre><hr></hr><pre>
+3082       case 5:
+3083         addr_nop_5();
+3084         break;
+3085       case 4:
+3086         addr_nop_4();
+3087         break;
+3088       case 3:
+3089         // Don't use "0x0F 0x1F 0x00" - need patching safe padding
+3090         emit_int8(0x66); // size prefix
+3091       case 2:
+3092         emit_int8(0x66); // size prefix
+3093       case 1:
+3094         emit_int8((unsigned char)0x90);
+3095                          // nop
+3096         break;
+3097       default:
+3098         assert(i == 0, " ");
+3099     }
+3100     return;
+3101   }
+<span class="changed">3102   if (UseAddressNop &amp;&amp; VM_Version::is_amd()) {</span>
+
+3103     //
+3104     // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
+3105     //  1: 0x90
+3106     //  2: 0x66 0x90
+3107     //  3: 0x66 0x66 0x90 (don't use "0x0F 0x1F 0x00" - need patching safe padding)
+3108     //  4: 0x0F 0x1F 0x40 0x00
+3109     //  5: 0x0F 0x1F 0x44 0x00 0x00
+3110     //  6: 0x66 0x0F 0x1F 0x44 0x00 0x00
+3111     //  7: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+3112     //  8: 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3113     //  9: 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3114     // 10: 0x66 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3115     // 11: 0x66 0x66 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3116 
+3117     // The rest coding is AMD specific - use consecutive address nops
+3118 
+3119     // 12: 0x66 0x0F 0x1F 0x44 0x00 0x00 0x66 0x0F 0x1F 0x44 0x00 0x00
+3120     // 13: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00 0x66 0x0F 0x1F 0x44 0x00 0x00
+3121     // 14: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+3122     // 15: 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+
+</pre><hr></hr>
+</pre></td><td><pre>
+
+</pre><hr></hr><pre>
+3082       case 5:
+3083         addr_nop_5();
+3084         break;
+3085       case 4:
+3086         addr_nop_4();
+3087         break;
+3088       case 3:
+3089         // Don't use "0x0F 0x1F 0x00" - need patching safe padding
+3090         emit_int8(0x66); // size prefix
+3091       case 2:
+3092         emit_int8(0x66); // size prefix
+3093       case 1:
+3094         emit_int8((unsigned char)0x90);
+3095                          // nop
+3096         break;
+3097       default:
+3098         assert(i == 0, " ");
+3099     }
+3100     return;
+3101   }
+<span class="changed">3102   if (UseAddressNop &amp;&amp;</span>
+<span class="changed">3103           (VM_Version::is_amd() || VM_Version::is_hygon())) {</span>
+3104     //
+3105     // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
+3106     //  1: 0x90
+3107     //  2: 0x66 0x90
+3108     //  3: 0x66 0x66 0x90 (don't use "0x0F 0x1F 0x00" - need patching safe padding)
+3109     //  4: 0x0F 0x1F 0x40 0x00
+3110     //  5: 0x0F 0x1F 0x44 0x00 0x00
+3111     //  6: 0x66 0x0F 0x1F 0x44 0x00 0x00
+3112     //  7: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+3113     //  8: 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3114     //  9: 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3115     // 10: 0x66 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3116     // 11: 0x66 0x66 0x66 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00
+3117 
+3118     // The rest coding is AMD specific - use consecutive address nops
+3119 
+3120     // 12: 0x66 0x0F 0x1F 0x44 0x00 0x00 0x66 0x0F 0x1F 0x44 0x00 0x00
+3121     // 13: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00 0x66 0x0F 0x1F 0x44 0x00 0x00
+3122     // 14: 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+3123     // 15: 0x0F 0x1F 0x84 0x00 0x00 0x00 0x00 0x00 0x0F 0x1F 0x80 0x00 0x00 0x00 0x00
+
+</pre><hr></hr>
+</pre></td>
+</tr></table>
+<center>&lt prev <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+</body></html>

@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<!--
+   Note to customizers: the body of the webrev is IDed as SUNWwebrev
+   to allow easy overriding by users of webrev via the userContent.css
+   mechanism available in some browsers.
+
+   For example, to have all "removed" information be red instead of
+   brown, set a rule in your userContent.css file like:
+
+       body#SUNWwebrev span.removed { color: red ! important; }
+-->
+<style type="text/css" media="screen">
+body {
+    background-color: #eeeeee;
+}
+hr {
+    border: none 0;
+    border-top: 1px solid #aaa;
+    height: 1px;
+}
+div.summary {
+    font-size: .8em;
+    border-bottom: 1px solid #aaa;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+div.summary h2 {
+    margin-bottom: 0.3em;
+}
+div.summary table th {
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+span.lineschanged {
+    font-size: 0.7em;
+}
+span.oldmarker {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+span.newmarker {
+    color: green;
+    font-size: large;
+    font-weight: bold;
+}
+span.removed {
+    color: brown;
+}
+span.changed {
+    color: blue;
+}
+span.new {
+    color: blue;
+    font-weight: bold;
+}
+a.print { font-size: x-small; }
+
+</style>
+
+<style type="text/css" media="print">
+pre { font-size: 0.8em; font-family: courier, monospace; }
+span.removed { color: #444; font-style: italic }
+span.changed { font-weight: bold; }
+span.new { font-weight: bold; }
+span.newmarker { font-size: 1.2em; font-weight: bold; }
+span.oldmarker { font-size: 1.2em; font-weight: bold; }
+a.print {display: none}
+hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
+</style>
+
+<title>jdk Cdiff src/hotspot/cpu/x86/vm_version_x86.hpp</title>
+</head>
+<body id="SUNWwebrev">
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> next &gt</center>
+<h2>src/hotspot/cpu/x86/vm_version_x86.hpp</h2>
+        <a class="print" href="javascript:print()">Print this page</a>
+<pre></pre>
+        <pre>
+<hr /><span class="oldmarker">*** 493,509 ****</span>
+      uint64_t result = 0;
+      if (_cpuid_info.std_cpuid1_edx.bits.cmpxchg8 != 0)
+        result |= CPU_CX8;
+      if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)
+        result |= CPU_CMOV;
+<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.fxsr != 0 || (is_amd() &amp;&amp;</span>
+          _cpuid_info.ext_cpuid1_edx.bits.fxsr != 0))
+        result |= CPU_FXSR;
+      // HT flag is set for multi-core processors also.
+      if (threads_per_core() &gt; 1)
+        result |= CPU_HT;
+<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || (is_amd() &amp;&amp;</span>
+          _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
+        result |= CPU_MMX;
+      if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)
+        result |= CPU_SSE;
+      if (_cpuid_info.std_cpuid1_edx.bits.sse2 != 0)
+<span class="newmarker">--- 493,509 ----</span>
+      uint64_t result = 0;
+      if (_cpuid_info.std_cpuid1_edx.bits.cmpxchg8 != 0)
+        result |= CPU_CX8;
+      if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)
+        result |= CPU_CMOV;
+<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.fxsr != 0 || ((is_amd() || is_hygon()) &amp;&amp;</span>
+          _cpuid_info.ext_cpuid1_edx.bits.fxsr != 0))
+        result |= CPU_FXSR;
+      // HT flag is set for multi-core processors also.
+      if (threads_per_core() &gt; 1)
+        result |= CPU_HT;
+<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ( (is_amd() || is_hygon()) &amp;&amp;</span>
+          _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
+        result |= CPU_MMX;
+      if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)
+        result |= CPU_SSE;
+      if (_cpuid_info.std_cpuid1_edx.bits.sse2 != 0)
+<hr /><span class="oldmarker">*** 574,585 ****</span>
+      if (_cpuid_info.sef_cpuid7_ebx.bits.sha != 0)
+        result |= CPU_SHA;
+      if (_cpuid_info.std_cpuid1_ecx.bits.fma != 0)
+        result |= CPU_FMA;
+  
+<span class="changed">!     // AMD features.</span>
+<span class="changed">!     if (is_amd()) {</span>
+        if ((_cpuid_info.ext_cpuid1_edx.bits.tdnow != 0) ||
+            (_cpuid_info.ext_cpuid1_ecx.bits.prefetchw != 0))
+          result |= CPU_3DNOW_PREFETCH;
+        if (_cpuid_info.ext_cpuid1_ecx.bits.lzcnt != 0)
+          result |= CPU_LZCNT;
+<span class="newmarker">--- 574,585 ----</span>
+      if (_cpuid_info.sef_cpuid7_ebx.bits.sha != 0)
+        result |= CPU_SHA;
+      if (_cpuid_info.std_cpuid1_ecx.bits.fma != 0)
+        result |= CPU_FMA;
+  
+<span class="changed">!     // AMD|Hygon features.</span>
+<span class="changed">!     if (is_amd() || is_hygon()) {</span>
+        if ((_cpuid_info.ext_cpuid1_edx.bits.tdnow != 0) ||
+            (_cpuid_info.ext_cpuid1_ecx.bits.prefetchw != 0))
+          result |= CPU_3DNOW_PREFETCH;
+        if (_cpuid_info.ext_cpuid1_ecx.bits.lzcnt != 0)
+          result |= CPU_LZCNT;
+<hr /><span class="oldmarker">*** 709,718 ****</span>
+<span class="newmarker">--- 709,719 ----</span>
+    //       determine whether a particular instruction is supported.
+    //
+    static int  cpu_family()        { return _cpu;}
+    static bool is_P6()             { return cpu_family() &gt;= 6; }
+    static bool is_amd()            { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x68747541; } // 'htuA'
+<span class="new">+   static bool is_hygon()          { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x6F677948; } // 'ogyH'</span>
+    static bool is_intel()          { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x756e6547; } // 'uneG'
+    static bool is_zx()             { assert_is_initialized(); return (_cpuid_info.std_vendor_name_0 == 0x746e6543) || (_cpuid_info.std_vendor_name_0 == 0x68532020); } // 'tneC'||'hS  '
+    static bool is_atom_family()    { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x36) || (extended_cpu_model() == 0x37) || (extended_cpu_model() == 0x4D))); } //Silvermont and Centerton
+    static bool is_knights_family() { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x57) || (extended_cpu_model() == 0x85))); } // Xeon Phi 3200/5200/7200 and Future Xeon Phi
+  
+<hr /><span class="oldmarker">*** 732,742 ****</span>
+                   _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+        }
+        if (!supports_topology || result == 0) {
+          result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+        }
+<span class="changed">!     } else if (is_amd()) {</span>
+        result = (_cpuid_info.ext_cpuid8_ecx.bits.cores_per_cpu + 1);
+      } else if (is_zx()) {
+        bool supports_topology = supports_processor_topology();
+        if (supports_topology) {
+          result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+<span class="newmarker">--- 733,743 ----</span>
+                   _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+        }
+        if (!supports_topology || result == 0) {
+          result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+        }
+<span class="changed">!     } else if (is_amd() || is_hygon()) {</span>
+        result = (_cpuid_info.ext_cpuid8_ecx.bits.cores_per_cpu + 1);
+      } else if (is_zx()) {
+        bool supports_topology = supports_processor_topology();
+        if (supports_topology) {
+          result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+<hr /><span class="oldmarker">*** 768,778 ****</span>
+  
+    static intx L1_line_size()  {
+      intx result = 0;
+      if (is_intel()) {
+        result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+<span class="changed">!     } else if (is_amd()) {</span>
+        result = _cpuid_info.ext_cpuid5_ecx.bits.L1_line_size;
+      } else if (is_zx()) {
+        result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+      }
+      if (result &lt; 32) // not defined ?
+<span class="newmarker">--- 769,779 ----</span>
+  
+    static intx L1_line_size()  {
+      intx result = 0;
+      if (is_intel()) {
+        result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+<span class="changed">!     } else if (is_amd() || is_hygon()) {</span>
+        result = _cpuid_info.ext_cpuid5_ecx.bits.L1_line_size;
+      } else if (is_zx()) {
+        result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+      }
+      if (result &lt; 32) // not defined ?
+<hr /><span class="oldmarker">*** 855,865 ****</span>
+      return false;
+    }
+  
+    // AMD features
+    static bool supports_3dnow_prefetch()    { return (_features &amp; CPU_3DNOW_PREFETCH) != 0; }
+<span class="changed">!   static bool supports_mmx_ext()  { return is_amd() &amp;&amp; _cpuid_info.ext_cpuid1_edx.bits.mmx_amd != 0; }</span>
+    static bool supports_lzcnt()    { return (_features &amp; CPU_LZCNT) != 0; }
+    static bool supports_sse4a()    { return (_features &amp; CPU_SSE4A) != 0; }
+  
+    static bool is_amd_Barcelona()  { return is_amd() &amp;&amp;
+                                             extended_cpu_family() == CPU_FAMILY_AMD_11H; }
+<span class="newmarker">--- 856,866 ----</span>
+      return false;
+    }
+  
+    // AMD features
+    static bool supports_3dnow_prefetch()    { return (_features &amp; CPU_3DNOW_PREFETCH) != 0; }
+<span class="changed">!   static bool supports_mmx_ext()  { return (is_amd()||is_hygon()) &amp;&amp; _cpuid_info.ext_cpuid1_edx.bits.mmx_amd != 0; }</span>
+    static bool supports_lzcnt()    { return (_features &amp; CPU_LZCNT) != 0; }
+    static bool supports_sse4a()    { return (_features &amp; CPU_SSE4A) != 0; }
+  
+    static bool is_amd_Barcelona()  { return is_amd() &amp;&amp;
+                                             extended_cpu_family() == CPU_FAMILY_AMD_11H; }
+<hr /><span class="oldmarker">*** 868,878 ****</span>
+    static bool supports_tscinv_bit() {
+      return (_features &amp; CPU_TSCINV) != 0;
+    }
+    static bool supports_tscinv() {
+      return supports_tscinv_bit() &amp;&amp;
+<span class="changed">!            ( (is_amd() &amp;&amp; !is_amd_Barcelona()) ||</span>
+               is_intel_tsc_synched_at_init() );
+    }
+  
+    // Intel Core and newer cpus have fast IDIV instruction (excluding Atom).
+    static bool has_fast_idiv()     { return is_intel() &amp;&amp; cpu_family() == 6 &amp;&amp;
+<span class="newmarker">--- 869,879 ----</span>
+    static bool supports_tscinv_bit() {
+      return (_features &amp; CPU_TSCINV) != 0;
+    }
+    static bool supports_tscinv() {
+      return supports_tscinv_bit() &amp;&amp;
+<span class="changed">!            ( ((is_amd()||is_hygon()) &amp;&amp; !is_amd_Barcelona()) ||</span>
+               is_intel_tsc_synched_at_init() );
+    }
+  
+    // Intel Core and newer cpus have fast IDIV instruction (excluding Atom).
+    static bool has_fast_idiv()     { return is_intel() &amp;&amp; cpu_family() == 6 &amp;&amp;
+<hr /><span class="oldmarker">*** 894,904 ****</span>
+      // Athlon    - 128 / prefetchnta
+      // Opteron   - 256 / prefetchnta
+      // Core      - 256 / prefetchnta
+      // It will be used only when AllocatePrefetchStyle &gt; 0
+  
+<span class="changed">!     if (is_amd()) { // AMD</span>
+        if (supports_sse2()) {
+          return 256; // Opteron
+        } else {
+          return 128; // Athlon
+        }
+<span class="newmarker">--- 895,905 ----</span>
+      // Athlon    - 128 / prefetchnta
+      // Opteron   - 256 / prefetchnta
+      // Core      - 256 / prefetchnta
+      // It will be used only when AllocatePrefetchStyle &gt; 0
+  
+<span class="changed">!     if (is_amd() || is_hygon()) { // AMD</span>
+        if (supports_sse2()) {
+          return 256; // Opteron
+        } else {
+          return 128; // Athlon
+        }
+</pre>
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> next &gt</center>
+</body></html>
+

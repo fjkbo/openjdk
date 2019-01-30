@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<!--
+   Note to customizers: the body of the webrev is IDed as SUNWwebrev
+   to allow easy overriding by users of webrev via the userContent.css
+   mechanism available in some browsers.
+
+   For example, to have all "removed" information be red instead of
+   brown, set a rule in your userContent.css file like:
+
+       body#SUNWwebrev span.removed { color: red ! important; }
+-->
+<style type="text/css" media="screen">
+body {
+    background-color: #eeeeee;
+}
+hr {
+    border: none 0;
+    border-top: 1px solid #aaa;
+    height: 1px;
+}
+div.summary {
+    font-size: .8em;
+    border-bottom: 1px solid #aaa;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+div.summary h2 {
+    margin-bottom: 0.3em;
+}
+div.summary table th {
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+span.lineschanged {
+    font-size: 0.7em;
+}
+span.oldmarker {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+span.newmarker {
+    color: green;
+    font-size: large;
+    font-weight: bold;
+}
+span.removed {
+    color: brown;
+}
+span.changed {
+    color: blue;
+}
+span.new {
+    color: blue;
+    font-weight: bold;
+}
+a.print { font-size: x-small; }
+
+</style>
+
+<style type="text/css" media="print">
+pre { font-size: 0.8em; font-family: courier, monospace; }
+span.removed { color: #444; font-style: italic }
+span.changed { font-weight: bold; }
+span.new { font-weight: bold; }
+span.newmarker { font-size: 1.2em; font-weight: bold; }
+span.oldmarker { font-size: 1.2em; font-weight: bold; }
+a.print {display: none}
+hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
+</style>
+
+<title>jdk Sdiff src/hotspot/cpu/x86 </title>
+</head><body id="SUNWwebrev">
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+<h2>src/hotspot/cpu/x86/vm_version_ext_x86.cpp</h2>
+<a class="print" href="javascript:print()">Print this page</a>
+<pre></pre>
+
+<table><tr valign="top">
+<td><pre>
+
+</pre><hr></hr><pre>
+ 323   return ((_cpuid_info.ext_cpuid1_edx.value &amp; INTEL64_FLAG) == INTEL64_FLAG);
+ 324 }
+ 325 
+ 326 bool VM_Version_Ext::is_netburst(void) {
+ 327   return (is_intel() &amp;&amp; (extended_cpu_family() == CPU_FAMILY_PENTIUM_4));
+ 328 }
+ 329 
+ 330 bool VM_Version_Ext::supports_tscinv_ext(void) {
+ 331   if (!supports_tscinv_bit()) {
+ 332     return false;
+ 333   }
+ 334 
+ 335   if (is_intel()) {
+ 336     return true;
+ 337   }
+ 338 
+ 339   if (is_amd()) {
+ 340     return !is_amd_Barcelona();
+ 341   }
+ 342 
+
+
+
+
+ 343   return false;
+ 344 }
+ 345 
+ 346 void VM_Version_Ext::resolve_cpu_information_details(void) {
+ 347 
+ 348   // in future we want to base this information on proper cpu
+ 349   // and cache topology enumeration such as:
+ 350   // Intel 64 Architecture Processor Topology Enumeration
+ 351   // which supports system cpu and cache topology enumeration
+ 352   // either using 2xAPICIDs or initial APICIDs
+ 353 
+ 354   // currently only rough cpu information estimates
+ 355   // which will not necessarily reflect the exact configuration of the system
+ 356 
+ 357   // this is the number of logical hardware threads
+ 358   // visible to the operating system
+ 359   _no_of_threads = os::processor_count();
+ 360 
+ 361   // find out number of threads per cpu package
+ 362   int threads_per_package = threads_per_core() * cores_per_cpu();
+
+</pre><hr></hr>
+</pre></td><td><pre>
+
+</pre><hr></hr><pre>
+ 323   return ((_cpuid_info.ext_cpuid1_edx.value &amp; INTEL64_FLAG) == INTEL64_FLAG);
+ 324 }
+ 325 
+ 326 bool VM_Version_Ext::is_netburst(void) {
+ 327   return (is_intel() &amp;&amp; (extended_cpu_family() == CPU_FAMILY_PENTIUM_4));
+ 328 }
+ 329 
+ 330 bool VM_Version_Ext::supports_tscinv_ext(void) {
+ 331   if (!supports_tscinv_bit()) {
+ 332     return false;
+ 333   }
+ 334 
+ 335   if (is_intel()) {
+ 336     return true;
+ 337   }
+ 338 
+ 339   if (is_amd()) {
+ 340     return !is_amd_Barcelona();
+ 341   }
+ 342 
+<span class="new"> 343   if (is_hygon()) {</span>
+<span class="new"> 344     return true;</span>
+<span class="new"> 345   }</span>
+<span class="new"> 346 </span>
+ 347   return false;
+ 348 }
+ 349 
+ 350 void VM_Version_Ext::resolve_cpu_information_details(void) {
+ 351 
+ 352   // in future we want to base this information on proper cpu
+ 353   // and cache topology enumeration such as:
+ 354   // Intel 64 Architecture Processor Topology Enumeration
+ 355   // which supports system cpu and cache topology enumeration
+ 356   // either using 2xAPICIDs or initial APICIDs
+ 357 
+ 358   // currently only rough cpu information estimates
+ 359   // which will not necessarily reflect the exact configuration of the system
+ 360 
+ 361   // this is the number of logical hardware threads
+ 362   // visible to the operating system
+ 363   _no_of_threads = os::processor_count();
+ 364 
+ 365   // find out number of threads per cpu package
+ 366   int threads_per_package = threads_per_core() * cores_per_cpu();
+
+</pre><hr></hr>
+</pre></td>
+</tr></table>
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+</body></html>

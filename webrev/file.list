@@ -1,0 +1,4 @@
+src/hotspot/cpu/x86/assembler_x86.cpp
+src/hotspot/cpu/x86/vm_version_ext_x86.cpp
+src/hotspot/cpu/x86/vm_version_x86.cpp
+src/hotspot/cpu/x86/vm_version_x86.hpp

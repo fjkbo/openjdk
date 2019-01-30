@@ -1,0 +1,649 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<!--
+   Note to customizers: the body of the webrev is IDed as SUNWwebrev
+   to allow easy overriding by users of webrev via the userContent.css
+   mechanism available in some browsers.
+
+   For example, to have all "removed" information be red instead of
+   brown, set a rule in your userContent.css file like:
+
+       body#SUNWwebrev span.removed { color: red ! important; }
+-->
+<style type="text/css" media="screen">
+body {
+    background-color: #eeeeee;
+}
+hr {
+    border: none 0;
+    border-top: 1px solid #aaa;
+    height: 1px;
+}
+div.summary {
+    font-size: .8em;
+    border-bottom: 1px solid #aaa;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+div.summary h2 {
+    margin-bottom: 0.3em;
+}
+div.summary table th {
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+span.lineschanged {
+    font-size: 0.7em;
+}
+span.oldmarker {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+span.newmarker {
+    color: green;
+    font-size: large;
+    font-weight: bold;
+}
+span.removed {
+    color: brown;
+}
+span.changed {
+    color: blue;
+}
+span.new {
+    color: blue;
+    font-weight: bold;
+}
+a.print { font-size: x-small; }
+
+</style>
+
+<style type="text/css" media="print">
+pre { font-size: 0.8em; font-family: courier, monospace; }
+span.removed { color: #444; font-style: italic }
+span.changed { font-weight: bold; }
+span.new { font-weight: bold; }
+span.newmarker { font-size: 1.2em; font-weight: bold; }
+span.oldmarker { font-size: 1.2em; font-weight: bold; }
+a.print {display: none}
+hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
+</style>
+
+<title>jdk Sdiff src/hotspot/cpu/x86 </title>
+</head><body id="SUNWwebrev">
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> next &gt</center>
+<h2>src/hotspot/cpu/x86/vm_version_x86.hpp</h2>
+<a class="print" href="javascript:print()">Print this page</a>
+<pre></pre>
+
+<table><tr valign="top">
+<td><pre>
+
+</pre><hr></hr><pre>
+ 478     result |= _cpuid_info.std_cpuid1_eax.bits.ext_model &lt;&lt; 4;
+ 479     return result;
+ 480   }
+ 481 
+ 482   static uint32_t cpu_stepping() {
+ 483     uint32_t result = _cpuid_info.std_cpuid1_eax.bits.stepping;
+ 484     return result;
+ 485   }
+ 486 
+ 487   static uint logical_processor_count() {
+ 488     uint result = threads_per_core();
+ 489     return result;
+ 490   }
+ 491 
+ 492   static uint64_t feature_flags() {
+ 493     uint64_t result = 0;
+ 494     if (_cpuid_info.std_cpuid1_edx.bits.cmpxchg8 != 0)
+ 495       result |= CPU_CX8;
+ 496     if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)
+ 497       result |= CPU_CMOV;
+<span class="changed"> 498     if (_cpuid_info.std_cpuid1_edx.bits.fxsr != 0 || (is_amd() &amp;&amp;</span>
+ 499         _cpuid_info.ext_cpuid1_edx.bits.fxsr != 0))
+ 500       result |= CPU_FXSR;
+ 501     // HT flag is set for multi-core processors also.
+ 502     if (threads_per_core() &gt; 1)
+ 503       result |= CPU_HT;
+<span class="changed"> 504     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || (is_amd() &amp;&amp;</span>
+ 505         _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
+ 506       result |= CPU_MMX;
+ 507     if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)
+ 508       result |= CPU_SSE;
+ 509     if (_cpuid_info.std_cpuid1_edx.bits.sse2 != 0)
+ 510       result |= CPU_SSE2;
+ 511     if (_cpuid_info.std_cpuid1_ecx.bits.sse3 != 0)
+ 512       result |= CPU_SSE3;
+ 513     if (_cpuid_info.std_cpuid1_ecx.bits.ssse3 != 0)
+ 514       result |= CPU_SSSE3;
+ 515     if (_cpuid_info.std_cpuid1_ecx.bits.sse4_1 != 0)
+ 516       result |= CPU_SSE4_1;
+ 517     if (_cpuid_info.std_cpuid1_ecx.bits.sse4_2 != 0)
+ 518       result |= CPU_SSE4_2;
+ 519     if (_cpuid_info.std_cpuid1_ecx.bits.popcnt != 0)
+ 520       result |= CPU_POPCNT;
+ 521     if (_cpuid_info.std_cpuid1_ecx.bits.avx != 0 &amp;&amp;
+ 522         _cpuid_info.std_cpuid1_ecx.bits.osxsave != 0 &amp;&amp;
+ 523         _cpuid_info.xem_xcr0_eax.bits.sse != 0 &amp;&amp;
+ 524         _cpuid_info.xem_xcr0_eax.bits.ymm != 0) {
+
+</pre><hr></hr><pre>
+ 559       result |= CPU_TSC;
+ 560     if (_cpuid_info.ext_cpuid7_edx.bits.tsc_invariance != 0)
+ 561       result |= CPU_TSCINV;
+ 562     if (_cpuid_info.std_cpuid1_ecx.bits.aes != 0)
+ 563       result |= CPU_AES;
+ 564     if (_cpuid_info.sef_cpuid7_ebx.bits.erms != 0)
+ 565       result |= CPU_ERMS;
+ 566     if (_cpuid_info.std_cpuid1_ecx.bits.clmul != 0)
+ 567       result |= CPU_CLMUL;
+ 568     if (_cpuid_info.sef_cpuid7_ebx.bits.rtm != 0)
+ 569       result |= CPU_RTM;
+ 570     if(_cpuid_info.sef_cpuid7_ebx.bits.adx != 0)
+ 571        result |= CPU_ADX;
+ 572     if(_cpuid_info.sef_cpuid7_ebx.bits.bmi2 != 0)
+ 573       result |= CPU_BMI2;
+ 574     if (_cpuid_info.sef_cpuid7_ebx.bits.sha != 0)
+ 575       result |= CPU_SHA;
+ 576     if (_cpuid_info.std_cpuid1_ecx.bits.fma != 0)
+ 577       result |= CPU_FMA;
+ 578 
+<span class="changed"> 579     // AMD features.</span>
+<span class="changed"> 580     if (is_amd()) {</span>
+ 581       if ((_cpuid_info.ext_cpuid1_edx.bits.tdnow != 0) ||
+ 582           (_cpuid_info.ext_cpuid1_ecx.bits.prefetchw != 0))
+ 583         result |= CPU_3DNOW_PREFETCH;
+ 584       if (_cpuid_info.ext_cpuid1_ecx.bits.lzcnt != 0)
+ 585         result |= CPU_LZCNT;
+ 586       if (_cpuid_info.ext_cpuid1_ecx.bits.sse4a != 0)
+ 587         result |= CPU_SSE4A;
+ 588     }
+ 589     // Intel features.
+ 590     if(is_intel()) {
+ 591       if(_cpuid_info.ext_cpuid1_ecx.bits.lzcnt_intel != 0)
+ 592         result |= CPU_LZCNT;
+ 593       // for Intel, ecx.bits.misalignsse bit (bit 8) indicates support for prefetchw
+ 594       if (_cpuid_info.ext_cpuid1_ecx.bits.misalignsse != 0) {
+ 595         result |= CPU_3DNOW_PREFETCH;
+ 596       }
+ 597     }
+ 598 
+ 599     // ZX features.
+ 600     if (is_zx()) {
+
+</pre><hr></hr><pre>
+ 694   }
+ 695 
+ 696   //
+ 697   // Processor family:
+ 698   //       3   -  386
+ 699   //       4   -  486
+ 700   //       5   -  Pentium
+ 701   //       6   -  PentiumPro, Pentium II, Celeron, Xeon, Pentium III, Athlon,
+ 702   //              Pentium M, Core Solo, Core Duo, Core2 Duo
+ 703   //    family 6 model:   9,        13,       14,        15
+ 704   //    0x0f   -  Pentium 4, Opteron
+ 705   //
+ 706   // Note: The cpu family should be used to select between
+ 707   //       instruction sequences which are valid on all Intel
+ 708   //       processors.  Use the feature test functions below to
+ 709   //       determine whether a particular instruction is supported.
+ 710   //
+ 711   static int  cpu_family()        { return _cpu;}
+ 712   static bool is_P6()             { return cpu_family() &gt;= 6; }
+ 713   static bool is_amd()            { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x68747541; } // 'htuA'
+
+ 714   static bool is_intel()          { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x756e6547; } // 'uneG'
+ 715   static bool is_zx()             { assert_is_initialized(); return (_cpuid_info.std_vendor_name_0 == 0x746e6543) || (_cpuid_info.std_vendor_name_0 == 0x68532020); } // 'tneC'||'hS  '
+ 716   static bool is_atom_family()    { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x36) || (extended_cpu_model() == 0x37) || (extended_cpu_model() == 0x4D))); } //Silvermont and Centerton
+ 717   static bool is_knights_family() { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x57) || (extended_cpu_model() == 0x85))); } // Xeon Phi 3200/5200/7200 and Future Xeon Phi
+ 718 
+ 719   static bool supports_processor_topology() {
+ 720     return (_cpuid_info.std_max_function &gt;= 0xB) &amp;&amp;
+ 721            // eax[4:0] | ebx[0:15] == 0 indicates invalid topology level.
+ 722            // Some cpus have max cpuid &gt;= 0xB but do not support processor topology.
+ 723            (((_cpuid_info.tpl_cpuidB0_eax &amp; 0x1f) | _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus) != 0);
+ 724   }
+ 725 
+ 726   static uint cores_per_cpu()  {
+ 727     uint result = 1;
+ 728     if (is_intel()) {
+ 729       bool supports_topology = supports_processor_topology();
+ 730       if (supports_topology) {
+ 731         result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+ 732                  _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 733       }
+ 734       if (!supports_topology || result == 0) {
+ 735         result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+ 736       }
+<span class="changed"> 737     } else if (is_amd()) {</span>
+ 738       result = (_cpuid_info.ext_cpuid8_ecx.bits.cores_per_cpu + 1);
+ 739     } else if (is_zx()) {
+ 740       bool supports_topology = supports_processor_topology();
+ 741       if (supports_topology) {
+ 742         result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+ 743                  _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 744       }
+ 745       if (!supports_topology || result == 0) {
+ 746         result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+ 747       }
+ 748     }
+ 749     return result;
+ 750   }
+ 751 
+ 752   static uint threads_per_core()  {
+ 753     uint result = 1;
+ 754     if (is_intel() &amp;&amp; supports_processor_topology()) {
+ 755       result = _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 756     } else if (is_zx() &amp;&amp; supports_processor_topology()) {
+ 757       result = _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 758     } else if (_cpuid_info.std_cpuid1_edx.bits.ht != 0) {
+ 759       if (cpu_family() &gt;= 0x17) {
+ 760         result = _cpuid_info.ext_cpuid1E_ebx.bits.threads_per_core + 1;
+ 761       } else {
+ 762         result = _cpuid_info.std_cpuid1_ebx.bits.threads_per_cpu /
+ 763                  cores_per_cpu();
+ 764       }
+ 765     }
+ 766     return (result == 0 ? 1 : result);
+ 767   }
+ 768 
+ 769   static intx L1_line_size()  {
+ 770     intx result = 0;
+ 771     if (is_intel()) {
+ 772       result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+<span class="changed"> 773     } else if (is_amd()) {</span>
+ 774       result = _cpuid_info.ext_cpuid5_ecx.bits.L1_line_size;
+ 775     } else if (is_zx()) {
+ 776       result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+ 777     }
+ 778     if (result &lt; 32) // not defined ?
+ 779       result = 32;   // 32 bytes by default on x86 and other x64
+ 780     return result;
+ 781   }
+ 782 
+ 783   static intx prefetch_data_size()  {
+ 784     return L1_line_size();
+ 785   }
+ 786 
+ 787   //
+ 788   // Feature identification
+ 789   //
+ 790   static bool supports_cpuid()    { return _features  != 0; }
+ 791   static bool supports_cmpxchg8() { return (_features &amp; CPU_CX8) != 0; }
+ 792   static bool supports_cmov()     { return (_features &amp; CPU_CMOV) != 0; }
+ 793   static bool supports_fxsr()     { return (_features &amp; CPU_FXSR) != 0; }
+
+</pre><hr></hr><pre>
+ 840   static bool is_intel_tsc_synched_at_init()  {
+ 841     if (is_intel_family_core()) {
+ 842       uint32_t ext_model = extended_cpu_model();
+ 843       if (ext_model == CPU_MODEL_NEHALEM_EP     ||
+ 844           ext_model == CPU_MODEL_WESTMERE_EP    ||
+ 845           ext_model == CPU_MODEL_SANDYBRIDGE_EP ||
+ 846           ext_model == CPU_MODEL_IVYBRIDGE_EP) {
+ 847         // &lt;= 2-socket invariant tsc support. EX versions are usually used
+ 848         // in &gt; 2-socket systems and likely don't synchronize tscs at
+ 849         // initialization.
+ 850         // Code that uses tsc values must be prepared for them to arbitrarily
+ 851         // jump forward or backward.
+ 852         return true;
+ 853       }
+ 854     }
+ 855     return false;
+ 856   }
+ 857 
+ 858   // AMD features
+ 859   static bool supports_3dnow_prefetch()    { return (_features &amp; CPU_3DNOW_PREFETCH) != 0; }
+<span class="changed"> 860   static bool supports_mmx_ext()  { return is_amd() &amp;&amp; _cpuid_info.ext_cpuid1_edx.bits.mmx_amd != 0; }</span>
+ 861   static bool supports_lzcnt()    { return (_features &amp; CPU_LZCNT) != 0; }
+ 862   static bool supports_sse4a()    { return (_features &amp; CPU_SSE4A) != 0; }
+ 863 
+ 864   static bool is_amd_Barcelona()  { return is_amd() &amp;&amp;
+ 865                                            extended_cpu_family() == CPU_FAMILY_AMD_11H; }
+ 866 
+ 867   // Intel and AMD newer cores support fast timestamps well
+ 868   static bool supports_tscinv_bit() {
+ 869     return (_features &amp; CPU_TSCINV) != 0;
+ 870   }
+ 871   static bool supports_tscinv() {
+ 872     return supports_tscinv_bit() &amp;&amp;
+<span class="changed"> 873            ( (is_amd() &amp;&amp; !is_amd_Barcelona()) ||</span>
+ 874              is_intel_tsc_synched_at_init() );
+ 875   }
+ 876 
+ 877   // Intel Core and newer cpus have fast IDIV instruction (excluding Atom).
+ 878   static bool has_fast_idiv()     { return is_intel() &amp;&amp; cpu_family() == 6 &amp;&amp;
+ 879                                            supports_sse3() &amp;&amp; _model != 0x1C; }
+ 880 
+ 881   static bool supports_compare_and_exchange() { return true; }
+ 882 
+ 883   static intx allocate_prefetch_distance(bool use_watermark_prefetch) {
+ 884     // Hardware prefetching (distance/size in bytes):
+ 885     // Pentium 3 -  64 /  32
+ 886     // Pentium 4 - 256 / 128
+ 887     // Athlon    -  64 /  32 ????
+ 888     // Opteron   - 128 /  64 only when 2 sequential cache lines accessed
+ 889     // Core      - 128 /  64
+ 890     //
+ 891     // Software prefetching (distance in bytes / instruction with best score):
+ 892     // Pentium 3 - 128 / prefetchnta
+ 893     // Pentium 4 - 512 / prefetchnta
+ 894     // Athlon    - 128 / prefetchnta
+ 895     // Opteron   - 256 / prefetchnta
+ 896     // Core      - 256 / prefetchnta
+ 897     // It will be used only when AllocatePrefetchStyle &gt; 0
+ 898 
+<span class="changed"> 899     if (is_amd()) { // AMD</span>
+ 900       if (supports_sse2()) {
+ 901         return 256; // Opteron
+ 902       } else {
+ 903         return 128; // Athlon
+ 904       }
+ 905     } else { // Intel
+ 906       if (supports_sse3() &amp;&amp; cpu_family() == 6) {
+ 907         if (supports_sse4_2() &amp;&amp; supports_ht()) { // Nehalem based cpus
+ 908           return 192;
+ 909         } else if (use_watermark_prefetch) { // watermark prefetching on Core
+ 910 #ifdef _LP64
+ 911           return 384;
+ 912 #else
+ 913           return 320;
+ 914 #endif
+ 915         }
+ 916       }
+ 917       if (supports_sse2()) {
+ 918         if (cpu_family() == 6) {
+ 919           return 256; // Pentium M, Core, Core2
+</pre></td><td><pre>
+
+</pre><hr></hr><pre>
+ 478     result |= _cpuid_info.std_cpuid1_eax.bits.ext_model &lt;&lt; 4;
+ 479     return result;
+ 480   }
+ 481 
+ 482   static uint32_t cpu_stepping() {
+ 483     uint32_t result = _cpuid_info.std_cpuid1_eax.bits.stepping;
+ 484     return result;
+ 485   }
+ 486 
+ 487   static uint logical_processor_count() {
+ 488     uint result = threads_per_core();
+ 489     return result;
+ 490   }
+ 491 
+ 492   static uint64_t feature_flags() {
+ 493     uint64_t result = 0;
+ 494     if (_cpuid_info.std_cpuid1_edx.bits.cmpxchg8 != 0)
+ 495       result |= CPU_CX8;
+ 496     if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)
+ 497       result |= CPU_CMOV;
+<span class="changed"> 498     if (_cpuid_info.std_cpuid1_edx.bits.fxsr != 0 || ((is_amd() || is_hygon()) &amp;&amp;</span>
+ 499         _cpuid_info.ext_cpuid1_edx.bits.fxsr != 0))
+ 500       result |= CPU_FXSR;
+ 501     // HT flag is set for multi-core processors also.
+ 502     if (threads_per_core() &gt; 1)
+ 503       result |= CPU_HT;
+<span class="changed"> 504     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ( (is_amd() || is_hygon()) &amp;&amp;</span>
+ 505         _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
+ 506       result |= CPU_MMX;
+ 507     if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)
+ 508       result |= CPU_SSE;
+ 509     if (_cpuid_info.std_cpuid1_edx.bits.sse2 != 0)
+ 510       result |= CPU_SSE2;
+ 511     if (_cpuid_info.std_cpuid1_ecx.bits.sse3 != 0)
+ 512       result |= CPU_SSE3;
+ 513     if (_cpuid_info.std_cpuid1_ecx.bits.ssse3 != 0)
+ 514       result |= CPU_SSSE3;
+ 515     if (_cpuid_info.std_cpuid1_ecx.bits.sse4_1 != 0)
+ 516       result |= CPU_SSE4_1;
+ 517     if (_cpuid_info.std_cpuid1_ecx.bits.sse4_2 != 0)
+ 518       result |= CPU_SSE4_2;
+ 519     if (_cpuid_info.std_cpuid1_ecx.bits.popcnt != 0)
+ 520       result |= CPU_POPCNT;
+ 521     if (_cpuid_info.std_cpuid1_ecx.bits.avx != 0 &amp;&amp;
+ 522         _cpuid_info.std_cpuid1_ecx.bits.osxsave != 0 &amp;&amp;
+ 523         _cpuid_info.xem_xcr0_eax.bits.sse != 0 &amp;&amp;
+ 524         _cpuid_info.xem_xcr0_eax.bits.ymm != 0) {
+
+</pre><hr></hr><pre>
+ 559       result |= CPU_TSC;
+ 560     if (_cpuid_info.ext_cpuid7_edx.bits.tsc_invariance != 0)
+ 561       result |= CPU_TSCINV;
+ 562     if (_cpuid_info.std_cpuid1_ecx.bits.aes != 0)
+ 563       result |= CPU_AES;
+ 564     if (_cpuid_info.sef_cpuid7_ebx.bits.erms != 0)
+ 565       result |= CPU_ERMS;
+ 566     if (_cpuid_info.std_cpuid1_ecx.bits.clmul != 0)
+ 567       result |= CPU_CLMUL;
+ 568     if (_cpuid_info.sef_cpuid7_ebx.bits.rtm != 0)
+ 569       result |= CPU_RTM;
+ 570     if(_cpuid_info.sef_cpuid7_ebx.bits.adx != 0)
+ 571        result |= CPU_ADX;
+ 572     if(_cpuid_info.sef_cpuid7_ebx.bits.bmi2 != 0)
+ 573       result |= CPU_BMI2;
+ 574     if (_cpuid_info.sef_cpuid7_ebx.bits.sha != 0)
+ 575       result |= CPU_SHA;
+ 576     if (_cpuid_info.std_cpuid1_ecx.bits.fma != 0)
+ 577       result |= CPU_FMA;
+ 578 
+<span class="changed"> 579     // AMD|Hygon features.</span>
+<span class="changed"> 580     if (is_amd() || is_hygon()) {</span>
+ 581       if ((_cpuid_info.ext_cpuid1_edx.bits.tdnow != 0) ||
+ 582           (_cpuid_info.ext_cpuid1_ecx.bits.prefetchw != 0))
+ 583         result |= CPU_3DNOW_PREFETCH;
+ 584       if (_cpuid_info.ext_cpuid1_ecx.bits.lzcnt != 0)
+ 585         result |= CPU_LZCNT;
+ 586       if (_cpuid_info.ext_cpuid1_ecx.bits.sse4a != 0)
+ 587         result |= CPU_SSE4A;
+ 588     }
+ 589     // Intel features.
+ 590     if(is_intel()) {
+ 591       if(_cpuid_info.ext_cpuid1_ecx.bits.lzcnt_intel != 0)
+ 592         result |= CPU_LZCNT;
+ 593       // for Intel, ecx.bits.misalignsse bit (bit 8) indicates support for prefetchw
+ 594       if (_cpuid_info.ext_cpuid1_ecx.bits.misalignsse != 0) {
+ 595         result |= CPU_3DNOW_PREFETCH;
+ 596       }
+ 597     }
+ 598 
+ 599     // ZX features.
+ 600     if (is_zx()) {
+
+</pre><hr></hr><pre>
+ 694   }
+ 695 
+ 696   //
+ 697   // Processor family:
+ 698   //       3   -  386
+ 699   //       4   -  486
+ 700   //       5   -  Pentium
+ 701   //       6   -  PentiumPro, Pentium II, Celeron, Xeon, Pentium III, Athlon,
+ 702   //              Pentium M, Core Solo, Core Duo, Core2 Duo
+ 703   //    family 6 model:   9,        13,       14,        15
+ 704   //    0x0f   -  Pentium 4, Opteron
+ 705   //
+ 706   // Note: The cpu family should be used to select between
+ 707   //       instruction sequences which are valid on all Intel
+ 708   //       processors.  Use the feature test functions below to
+ 709   //       determine whether a particular instruction is supported.
+ 710   //
+ 711   static int  cpu_family()        { return _cpu;}
+ 712   static bool is_P6()             { return cpu_family() &gt;= 6; }
+ 713   static bool is_amd()            { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x68747541; } // 'htuA'
+<span class="new"> 714   static bool is_hygon()          { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x6F677948; } // 'ogyH'</span>
+ 715   static bool is_intel()          { assert_is_initialized(); return _cpuid_info.std_vendor_name_0 == 0x756e6547; } // 'uneG'
+ 716   static bool is_zx()             { assert_is_initialized(); return (_cpuid_info.std_vendor_name_0 == 0x746e6543) || (_cpuid_info.std_vendor_name_0 == 0x68532020); } // 'tneC'||'hS  '
+ 717   static bool is_atom_family()    { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x36) || (extended_cpu_model() == 0x37) || (extended_cpu_model() == 0x4D))); } //Silvermont and Centerton
+ 718   static bool is_knights_family() { return ((cpu_family() == 0x06) &amp;&amp; ((extended_cpu_model() == 0x57) || (extended_cpu_model() == 0x85))); } // Xeon Phi 3200/5200/7200 and Future Xeon Phi
+ 719 
+ 720   static bool supports_processor_topology() {
+ 721     return (_cpuid_info.std_max_function &gt;= 0xB) &amp;&amp;
+ 722            // eax[4:0] | ebx[0:15] == 0 indicates invalid topology level.
+ 723            // Some cpus have max cpuid &gt;= 0xB but do not support processor topology.
+ 724            (((_cpuid_info.tpl_cpuidB0_eax &amp; 0x1f) | _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus) != 0);
+ 725   }
+ 726 
+ 727   static uint cores_per_cpu()  {
+ 728     uint result = 1;
+ 729     if (is_intel()) {
+ 730       bool supports_topology = supports_processor_topology();
+ 731       if (supports_topology) {
+ 732         result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+ 733                  _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 734       }
+ 735       if (!supports_topology || result == 0) {
+ 736         result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+ 737       }
+<span class="changed"> 738     } else if (is_amd() || is_hygon()) {</span>
+ 739       result = (_cpuid_info.ext_cpuid8_ecx.bits.cores_per_cpu + 1);
+ 740     } else if (is_zx()) {
+ 741       bool supports_topology = supports_processor_topology();
+ 742       if (supports_topology) {
+ 743         result = _cpuid_info.tpl_cpuidB1_ebx.bits.logical_cpus /
+ 744                  _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 745       }
+ 746       if (!supports_topology || result == 0) {
+ 747         result = (_cpuid_info.dcp_cpuid4_eax.bits.cores_per_cpu + 1);
+ 748       }
+ 749     }
+ 750     return result;
+ 751   }
+ 752 
+ 753   static uint threads_per_core()  {
+ 754     uint result = 1;
+ 755     if (is_intel() &amp;&amp; supports_processor_topology()) {
+ 756       result = _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 757     } else if (is_zx() &amp;&amp; supports_processor_topology()) {
+ 758       result = _cpuid_info.tpl_cpuidB0_ebx.bits.logical_cpus;
+ 759     } else if (_cpuid_info.std_cpuid1_edx.bits.ht != 0) {
+ 760       if (cpu_family() &gt;= 0x17) {
+ 761         result = _cpuid_info.ext_cpuid1E_ebx.bits.threads_per_core + 1;
+ 762       } else {
+ 763         result = _cpuid_info.std_cpuid1_ebx.bits.threads_per_cpu /
+ 764                  cores_per_cpu();
+ 765       }
+ 766     }
+ 767     return (result == 0 ? 1 : result);
+ 768   }
+ 769 
+ 770   static intx L1_line_size()  {
+ 771     intx result = 0;
+ 772     if (is_intel()) {
+ 773       result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+<span class="changed"> 774     } else if (is_amd() || is_hygon()) {</span>
+ 775       result = _cpuid_info.ext_cpuid5_ecx.bits.L1_line_size;
+ 776     } else if (is_zx()) {
+ 777       result = (_cpuid_info.dcp_cpuid4_ebx.bits.L1_line_size + 1);
+ 778     }
+ 779     if (result &lt; 32) // not defined ?
+ 780       result = 32;   // 32 bytes by default on x86 and other x64
+ 781     return result;
+ 782   }
+ 783 
+ 784   static intx prefetch_data_size()  {
+ 785     return L1_line_size();
+ 786   }
+ 787 
+ 788   //
+ 789   // Feature identification
+ 790   //
+ 791   static bool supports_cpuid()    { return _features  != 0; }
+ 792   static bool supports_cmpxchg8() { return (_features &amp; CPU_CX8) != 0; }
+ 793   static bool supports_cmov()     { return (_features &amp; CPU_CMOV) != 0; }
+ 794   static bool supports_fxsr()     { return (_features &amp; CPU_FXSR) != 0; }
+
+</pre><hr></hr><pre>
+ 841   static bool is_intel_tsc_synched_at_init()  {
+ 842     if (is_intel_family_core()) {
+ 843       uint32_t ext_model = extended_cpu_model();
+ 844       if (ext_model == CPU_MODEL_NEHALEM_EP     ||
+ 845           ext_model == CPU_MODEL_WESTMERE_EP    ||
+ 846           ext_model == CPU_MODEL_SANDYBRIDGE_EP ||
+ 847           ext_model == CPU_MODEL_IVYBRIDGE_EP) {
+ 848         // &lt;= 2-socket invariant tsc support. EX versions are usually used
+ 849         // in &gt; 2-socket systems and likely don't synchronize tscs at
+ 850         // initialization.
+ 851         // Code that uses tsc values must be prepared for them to arbitrarily
+ 852         // jump forward or backward.
+ 853         return true;
+ 854       }
+ 855     }
+ 856     return false;
+ 857   }
+ 858 
+ 859   // AMD features
+ 860   static bool supports_3dnow_prefetch()    { return (_features &amp; CPU_3DNOW_PREFETCH) != 0; }
+<span class="changed"> 861   static bool supports_mmx_ext()  { return (is_amd()||is_hygon()) &amp;&amp; _cpuid_info.ext_cpuid1_edx.bits.mmx_amd != 0; }</span>
+ 862   static bool supports_lzcnt()    { return (_features &amp; CPU_LZCNT) != 0; }
+ 863   static bool supports_sse4a()    { return (_features &amp; CPU_SSE4A) != 0; }
+ 864 
+ 865   static bool is_amd_Barcelona()  { return is_amd() &amp;&amp;
+ 866                                            extended_cpu_family() == CPU_FAMILY_AMD_11H; }
+ 867 
+ 868   // Intel and AMD newer cores support fast timestamps well
+ 869   static bool supports_tscinv_bit() {
+ 870     return (_features &amp; CPU_TSCINV) != 0;
+ 871   }
+ 872   static bool supports_tscinv() {
+ 873     return supports_tscinv_bit() &amp;&amp;
+<span class="changed"> 874            ( ((is_amd()||is_hygon()) &amp;&amp; !is_amd_Barcelona()) ||</span>
+ 875              is_intel_tsc_synched_at_init() );
+ 876   }
+ 877 
+ 878   // Intel Core and newer cpus have fast IDIV instruction (excluding Atom).
+ 879   static bool has_fast_idiv()     { return is_intel() &amp;&amp; cpu_family() == 6 &amp;&amp;
+ 880                                            supports_sse3() &amp;&amp; _model != 0x1C; }
+ 881 
+ 882   static bool supports_compare_and_exchange() { return true; }
+ 883 
+ 884   static intx allocate_prefetch_distance(bool use_watermark_prefetch) {
+ 885     // Hardware prefetching (distance/size in bytes):
+ 886     // Pentium 3 -  64 /  32
+ 887     // Pentium 4 - 256 / 128
+ 888     // Athlon    -  64 /  32 ????
+ 889     // Opteron   - 128 /  64 only when 2 sequential cache lines accessed
+ 890     // Core      - 128 /  64
+ 891     //
+ 892     // Software prefetching (distance in bytes / instruction with best score):
+ 893     // Pentium 3 - 128 / prefetchnta
+ 894     // Pentium 4 - 512 / prefetchnta
+ 895     // Athlon    - 128 / prefetchnta
+ 896     // Opteron   - 256 / prefetchnta
+ 897     // Core      - 256 / prefetchnta
+ 898     // It will be used only when AllocatePrefetchStyle &gt; 0
+ 899 
+<span class="changed"> 900     if (is_amd() || is_hygon()) { // AMD</span>
+ 901       if (supports_sse2()) {
+ 902         return 256; // Opteron
+ 903       } else {
+ 904         return 128; // Athlon
+ 905       }
+ 906     } else { // Intel
+ 907       if (supports_sse3() &amp;&amp; cpu_family() == 6) {
+ 908         if (supports_sse4_2() &amp;&amp; supports_ht()) { // Nehalem based cpus
+ 909           return 192;
+ 910         } else if (use_watermark_prefetch) { // watermark prefetching on Core
+ 911 #ifdef _LP64
+ 912           return 384;
+ 913 #else
+ 914           return 320;
+ 915 #endif
+ 916         }
+ 917       }
+ 918       if (supports_sse2()) {
+ 919         if (cpu_family() == 6) {
+ 920           return 256; // Pentium M, Core, Core2
+</pre></td>
+</tr></table>
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> next &gt</center>
+</body></html>

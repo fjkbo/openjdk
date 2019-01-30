@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta charset="utf-8">
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<!--
+   Note to customizers: the body of the webrev is IDed as SUNWwebrev
+   to allow easy overriding by users of webrev via the userContent.css
+   mechanism available in some browsers.
+
+   For example, to have all "removed" information be red instead of
+   brown, set a rule in your userContent.css file like:
+
+       body#SUNWwebrev span.removed { color: red ! important; }
+-->
+<style type="text/css" media="screen">
+body {
+    background-color: #eeeeee;
+}
+hr {
+    border: none 0;
+    border-top: 1px solid #aaa;
+    height: 1px;
+}
+div.summary {
+    font-size: .8em;
+    border-bottom: 1px solid #aaa;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+div.summary h2 {
+    margin-bottom: 0.3em;
+}
+div.summary table th {
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+span.lineschanged {
+    font-size: 0.7em;
+}
+span.oldmarker {
+    color: red;
+    font-size: large;
+    font-weight: bold;
+}
+span.newmarker {
+    color: green;
+    font-size: large;
+    font-weight: bold;
+}
+span.removed {
+    color: brown;
+}
+span.changed {
+    color: blue;
+}
+span.new {
+    color: blue;
+    font-weight: bold;
+}
+a.print { font-size: x-small; }
+
+</style>
+
+<style type="text/css" media="print">
+pre { font-size: 0.8em; font-family: courier, monospace; }
+span.removed { color: #444; font-style: italic }
+span.changed { font-weight: bold; }
+span.new { font-weight: bold; }
+span.newmarker { font-size: 1.2em; font-weight: bold; }
+span.oldmarker { font-size: 1.2em; font-weight: bold; }
+a.print {display: none}
+hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
+</style>
+
+<title>jdk Sdiff src/hotspot/cpu/x86 </title>
+</head><body id="SUNWwebrev">
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.hpp.sdiff.html' target='_top'>next &gt</a></center>
+<h2>src/hotspot/cpu/x86/vm_version_x86.cpp</h2>
+<a class="print" href="javascript:print()">Print this page</a>
+<pre></pre>
+
+<table><tr valign="top">
+<td><pre>
+
+</pre><hr></hr><pre>
+1144           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
+1145         }
+1146       }
+1147       if (supports_sse4_2()) {
+1148         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
+1149           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
+1150         }
+1151       } else {
+1152         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
+1153           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1154         }
+1155         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
+1156       }
+1157     }
+1158 
+1159     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
+1160       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1161     }
+1162   }
+1163 
+<span class="changed">1164   if( is_amd() ) { // AMD cpus specific settings</span>
+1165     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
+1166       // Use it on new AMD cpus starting from Opteron.
+1167       UseAddressNop = true;
+1168     }
+1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1170       // Use it on new AMD cpus starting from Opteron.
+1171       UseNewLongLShift = true;
+1172     }
+1173     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
+1174       if (supports_sse4a()) {
+1175         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
+1176       } else {
+1177         UseXmmLoadAndClearUpper = false;
+1178       }
+1179     }
+1180     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
+1181       if( supports_sse4a() ) {
+1182         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
+1183       } else {
+1184         UseXmmRegToRegMoveAll = false;
+
+</pre><hr></hr><pre>
+1218       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
+1219       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
+1220         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1221       }
+1222       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
+1223       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1224         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1225       }
+1226       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1227         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1228       }
+1229     }
+1230 
+1231 #ifdef COMPILER2
+1232     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
+1233       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
+1234       FLAG_SET_DEFAULT(MaxVectorSize, 16);
+1235     }
+1236 #endif // COMPILER2
+1237 
+<span class="changed">1238     // Some defaults for AMD family 17h</span>
+<span class="changed">1239     if ( cpu_family() == 0x17 ) {</span>
+1240       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
+1241       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1242         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1243       }
+1244       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1245         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1246       }
+1247 #ifdef COMPILER2
+1248       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
+1249         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1250       }
+1251 #endif
+1252     }
+1253   }
+1254 
+1255   if( is_intel() ) { // Intel cpus specific settings
+1256     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
+1257       UseStoreImmI16 = false; // don't use it on Intel cpus
+1258     }
+1259     if( cpu_family() == 6 || cpu_family() == 15 ) {
+
+</pre><hr></hr>
+</pre></td><td><pre>
+
+</pre><hr></hr><pre>
+1144           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
+1145         }
+1146       }
+1147       if (supports_sse4_2()) {
+1148         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
+1149           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
+1150         }
+1151       } else {
+1152         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
+1153           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1154         }
+1155         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
+1156       }
+1157     }
+1158 
+1159     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
+1160       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1161     }
+1162   }
+1163 
+<span class="changed">1164   if( is_amd() || is_hygon()) { // AMD cpus specific settings</span>
+1165     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
+1166       // Use it on new AMD cpus starting from Opteron.
+1167       UseAddressNop = true;
+1168     }
+1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1170       // Use it on new AMD cpus starting from Opteron.
+1171       UseNewLongLShift = true;
+1172     }
+1173     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
+1174       if (supports_sse4a()) {
+1175         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
+1176       } else {
+1177         UseXmmLoadAndClearUpper = false;
+1178       }
+1179     }
+1180     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
+1181       if( supports_sse4a() ) {
+1182         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
+1183       } else {
+1184         UseXmmRegToRegMoveAll = false;
+
+</pre><hr></hr><pre>
+1218       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
+1219       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
+1220         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1221       }
+1222       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
+1223       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1224         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1225       }
+1226       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1227         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1228       }
+1229     }
+1230 
+1231 #ifdef COMPILER2
+1232     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
+1233       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
+1234       FLAG_SET_DEFAULT(MaxVectorSize, 16);
+1235     }
+1236 #endif // COMPILER2
+1237 
+<span class="changed">1238     // Some defaults for AMD family 17h || Hygon family 18h</span>
+<span class="changed">1239     if ( cpu_family() == 0x17 || cpu_family() == 0x18) {</span>
+1240       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
+1241       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1242         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1243       }
+1244       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1245         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1246       }
+1247 #ifdef COMPILER2
+1248       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
+1249         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1250       }
+1251 #endif
+1252     }
+1253   }
+1254 
+1255   if( is_intel() ) { // Intel cpus specific settings
+1256     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
+1257       UseStoreImmI16 = false; // don't use it on Intel cpus
+1258     }
+1259     if( cpu_family() == 6 || cpu_family() == 15 ) {
+
+</pre><hr></hr>
+</pre></td>
+</tr></table>
+<center><a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.hpp.sdiff.html' target='_top'>next &gt</a></center>
+</body></html>
