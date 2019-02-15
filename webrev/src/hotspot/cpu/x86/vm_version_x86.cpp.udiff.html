@@ -101,7 +101,7 @@ span.new {
    }
  
 <span class="removed">-  if( is_amd() ) { // AMD cpus specific settings</span>
-<span class="new">+  if( is_amd() || is_hygon()) { // AMD cpus specific settings</span>
+<span class="new">+  if( is_amd() || is_hygon() ) { // AMD cpus specific settings</span>
      if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
        // Use it on new AMD cpus starting from Opteron.
        UseAddressNop = true;
@@ -117,7 +117,7 @@ span.new {
 <span class="removed">-    // Some defaults for AMD family 17h</span>
 <span class="removed">-    if ( cpu_family() == 0x17 ) {</span>
 <span class="new">+    // Some defaults for AMD family 17h || Hygon family 18h</span>
-<span class="new">+    if ( cpu_family() == 0x17 || cpu_family() == 0x18) {</span>
+<span class="new">+    if ( cpu_family() == 0x17 || cpu_family() == 0x18 ) {</span>
        // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
        if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
          FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);

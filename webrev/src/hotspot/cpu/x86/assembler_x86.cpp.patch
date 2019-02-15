@@ -1,12 +1,11 @@
---- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-01-30 10:44:44.739680007 +0800
-+++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-01-30 10:44:44.515672573 +0800
-@@ -3099,7 +3099,8 @@
+--- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-02-15 20:51:08.129714433 +0800
++++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-02-15 20:51:07.877702676 +0800
+@@ -3099,7 +3099,7 @@
      }
      return;
    }
 -  if (UseAddressNop && VM_Version::is_amd()) {
-+  if (UseAddressNop &&
-+	  (VM_Version::is_amd() || VM_Version::is_hygon())) {
++  if (UseAddressNop && (VM_Version::is_amd() || VM_Version::is_hygon())) {
      //
      // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
      //  1: 0x90

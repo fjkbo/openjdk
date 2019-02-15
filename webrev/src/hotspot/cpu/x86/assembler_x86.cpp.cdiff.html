@@ -97,14 +97,13 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
       //  1: 0x90
       //  2: 0x66 0x90
       //  3: 0x66 0x66 0x90 (don't use "0x0F 0x1F 0x00" - need patching safe padding)
-<span class="newmarker">--- 3097,3108 ----</span>
+<span class="newmarker">--- 3097,3107 ----</span>
         default:
           assert(i == 0, " ");
       }
       return;
     }
-<span class="changed">!   if (UseAddressNop &amp;&amp;</span>
-<span class="changed">!           (VM_Version::is_amd() || VM_Version::is_hygon())) {</span>
+<span class="changed">!   if (UseAddressNop &amp;&amp; (VM_Version::is_amd() || VM_Version::is_hygon())) {</span>
       //
       // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
       //  1: 0x90

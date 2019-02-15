@@ -501,7 +501,7 @@ protected:
     // HT flag is set for multi-core processors also.
     if (threads_per_core() > 1)
       result |= CPU_HT;
-    if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ( (is_amd() || is_hygon()) &&
+    if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ((is_amd() || is_hygon()) &&
         _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
       result |= CPU_MMX;
     if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)

@@ -3099,8 +3099,7 @@ void Assembler::nop(int i) {
     }
     return;
   }
-  if (UseAddressNop &&
-	  (VM_Version::is_amd() || VM_Version::is_hygon())) {
+  if (UseAddressNop && (VM_Version::is_amd() || VM_Version::is_hygon())) {
     //
     // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
     //  1: 0x90

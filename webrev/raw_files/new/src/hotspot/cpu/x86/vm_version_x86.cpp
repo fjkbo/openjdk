@@ -1161,7 +1161,7 @@ void VM_Version::get_processor_features() {
     }
   }
 
-  if( is_amd() || is_hygon()) { // AMD cpus specific settings
+  if( is_amd() || is_hygon() ) { // AMD cpus specific settings
     if( supports_sse2() && FLAG_IS_DEFAULT(UseAddressNop) ) {
       // Use it on new AMD cpus starting from Opteron.
       UseAddressNop = true;
@@ -1236,7 +1236,7 @@ void VM_Version::get_processor_features() {
 #endif // COMPILER2
 
     // Some defaults for AMD family 17h || Hygon family 18h
-    if ( cpu_family() == 0x17 || cpu_family() == 0x18) {
+    if ( cpu_family() == 0x17 || cpu_family() == 0x18 ) {
       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
       if (supports_sse2() && FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);

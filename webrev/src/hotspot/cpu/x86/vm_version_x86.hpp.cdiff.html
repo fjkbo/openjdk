@@ -115,7 +115,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
       // HT flag is set for multi-core processors also.
       if (threads_per_core() &gt; 1)
         result |= CPU_HT;
-<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ( (is_amd() || is_hygon()) &amp;&amp;</span>
+<span class="changed">!     if (_cpuid_info.std_cpuid1_edx.bits.mmx != 0 || ((is_amd() || is_hygon()) &amp;&amp;</span>
           _cpuid_info.ext_cpuid1_edx.bits.mmx != 0))
         result |= CPU_MMX;
       if (_cpuid_info.std_cpuid1_edx.bits.sse != 0)
