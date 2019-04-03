@@ -1,5 +1,5 @@
---- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-02-15 20:51:09.761790578 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-02-15 20:51:09.513779007 +0800
+--- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.417510317 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.149501105 +0800
 @@ -495,13 +495,13 @@
        result |= CPU_CX8;
      if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)

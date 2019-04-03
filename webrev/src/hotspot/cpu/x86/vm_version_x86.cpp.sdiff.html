@@ -88,181 +88,181 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
 <td><pre>
 
 </pre><hr></hr><pre>
-1144           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
-1145         }
-1146       }
-1147       if (supports_sse4_2()) {
-1148         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
-1149           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
-1150         }
-1151       } else {
-1152         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
-1153           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1148           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
+1149         }
+1150       }
+1151       if (supports_sse4_2()) {
+1152         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
+1153           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
 1154         }
-1155         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
-1156       }
-1157     }
-1158 
-1159     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
-1160       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1155       } else {
+1156         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
+1157           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1158         }
+1159         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
+1160       }
 1161     }
-1162   }
-1163 
-<span class="changed">1164   if( is_amd() ) { // AMD cpus specific settings</span>
-1165     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
-1166       // Use it on new AMD cpus starting from Opteron.
-1167       UseAddressNop = true;
-1168     }
-1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1162 
+1163     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
+1164       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1165     }
+1166   }
+1167 
+<span class="changed">1168   if( is_amd() ) { // AMD cpus specific settings</span>
+1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
 1170       // Use it on new AMD cpus starting from Opteron.
-1171       UseNewLongLShift = true;
+1171       UseAddressNop = true;
 1172     }
-1173     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
-1174       if (supports_sse4a()) {
-1175         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
-1176       } else {
-1177         UseXmmLoadAndClearUpper = false;
-1178       }
-1179     }
-1180     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
-1181       if( supports_sse4a() ) {
-1182         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
-1183       } else {
-1184         UseXmmRegToRegMoveAll = false;
+1173     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1174       // Use it on new AMD cpus starting from Opteron.
+1175       UseNewLongLShift = true;
+1176     }
+1177     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
+1178       if (supports_sse4a()) {
+1179         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
+1180       } else {
+1181         UseXmmLoadAndClearUpper = false;
+1182       }
+1183     }
+1184     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
+1185       if( supports_sse4a() ) {
+1186         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
+1187       } else {
+1188         UseXmmRegToRegMoveAll = false;
 
 </pre><hr></hr><pre>
-1218       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
-1219       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
-1220         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
-1221       }
-1222       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
-1223       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
-1224         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1222       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
+1223       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
+1224         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
 1225       }
-1226       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
-1227         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
-1228       }
-1229     }
-1230 
-1231 #ifdef COMPILER2
-1232     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
-1233       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
-1234       FLAG_SET_DEFAULT(MaxVectorSize, 16);
-1235     }
-1236 #endif // COMPILER2
-1237 
-<span class="changed">1238     // Some defaults for AMD family 17h</span>
-<span class="changed">1239     if ( cpu_family() == 0x17 ) {</span>
-1240       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
-1241       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
-1242         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
-1243       }
-1244       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
-1245         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
-1246       }
-1247 #ifdef COMPILER2
-1248       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
-1249         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1226       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
+1227       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1228         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1229       }
+1230       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1231         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1232       }
+1233     }
+1234 
+1235 #ifdef COMPILER2
+1236     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
+1237       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
+1238       FLAG_SET_DEFAULT(MaxVectorSize, 16);
+1239     }
+1240 #endif // COMPILER2
+1241 
+<span class="changed">1242     // Some defaults for AMD family 17h</span>
+<span class="changed">1243     if ( cpu_family() == 0x17 ) {</span>
+1244       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
+1245       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1246         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1247       }
+1248       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1249         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
 1250       }
-1251 #endif
-1252     }
-1253   }
-1254 
-1255   if( is_intel() ) { // Intel cpus specific settings
-1256     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
-1257       UseStoreImmI16 = false; // don't use it on Intel cpus
-1258     }
-1259     if( cpu_family() == 6 || cpu_family() == 15 ) {
+1251 #ifdef COMPILER2
+1252       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
+1253         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1254       }
+1255 #endif
+1256     }
+1257   }
+1258 
+1259   if( is_intel() ) { // Intel cpus specific settings
+1260     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
+1261       UseStoreImmI16 = false; // don't use it on Intel cpus
+1262     }
+1263     if( cpu_family() == 6 || cpu_family() == 15 ) {
 
 </pre><hr></hr>
 </pre></td><td><pre>
 
 </pre><hr></hr><pre>
-1144           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
-1145         }
-1146       }
-1147       if (supports_sse4_2()) {
-1148         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
-1149           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
-1150         }
-1151       } else {
-1152         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
-1153           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1148           UseUnalignedLoadStores = true; // use movdqu on newest ZX cpus
+1149         }
+1150       }
+1151       if (supports_sse4_2()) {
+1152         if (FLAG_IS_DEFAULT(UseSSE42Intrinsics)) {
+1153           FLAG_SET_DEFAULT(UseSSE42Intrinsics, true);
 1154         }
-1155         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
-1156       }
-1157     }
-1158 
-1159     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
-1160       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1155       } else {
+1156         if (UseSSE42Intrinsics &amp;&amp; !FLAG_IS_DEFAULT(UseAESIntrinsics)) {
+1157           warning("SSE4.2 intrinsics require SSE4.2 instructions or higher. Intrinsics will be disabled.");
+1158         }
+1159         FLAG_SET_DEFAULT(UseSSE42Intrinsics, false);
+1160       }
 1161     }
-1162   }
-1163 
-<span class="changed">1164   if( is_amd() || is_hygon() ) { // AMD cpus specific settings</span>
-1165     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
-1166       // Use it on new AMD cpus starting from Opteron.
-1167       UseAddressNop = true;
-1168     }
-1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1162 
+1163     if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
+1164       FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
+1165     }
+1166   }
+1167 
+<span class="changed">1168   if( is_amd() || is_hygon() ) { // AMD cpus specific settings</span>
+1169     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseAddressNop) ) {
 1170       // Use it on new AMD cpus starting from Opteron.
-1171       UseNewLongLShift = true;
+1171       UseAddressNop = true;
 1172     }
-1173     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
-1174       if (supports_sse4a()) {
-1175         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
-1176       } else {
-1177         UseXmmLoadAndClearUpper = false;
-1178       }
-1179     }
-1180     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
-1181       if( supports_sse4a() ) {
-1182         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
-1183       } else {
-1184         UseXmmRegToRegMoveAll = false;
+1173     if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
+1174       // Use it on new AMD cpus starting from Opteron.
+1175       UseNewLongLShift = true;
+1176     }
+1177     if( FLAG_IS_DEFAULT(UseXmmLoadAndClearUpper) ) {
+1178       if (supports_sse4a()) {
+1179         UseXmmLoadAndClearUpper = true; // use movsd only on '10h' Opteron
+1180       } else {
+1181         UseXmmLoadAndClearUpper = false;
+1182       }
+1183     }
+1184     if( FLAG_IS_DEFAULT(UseXmmRegToRegMoveAll) ) {
+1185       if( supports_sse4a() ) {
+1186         UseXmmRegToRegMoveAll = true; // use movaps, movapd only on '10h'
+1187       } else {
+1188         UseXmmRegToRegMoveAll = false;
 
 </pre><hr></hr><pre>
-1218       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
-1219       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
-1220         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
-1221       }
-1222       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
-1223       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
-1224         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1222       // Also, if some other prefetch style is specified, default instruction type is PREFETCHW
+1223       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr)) {
+1224         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
 1225       }
-1226       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
-1227         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
-1228       }
-1229     }
-1230 
-1231 #ifdef COMPILER2
-1232     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
-1233       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
-1234       FLAG_SET_DEFAULT(MaxVectorSize, 16);
-1235     }
-1236 #endif // COMPILER2
-1237 
-<span class="changed">1238     // Some defaults for AMD family 17h || Hygon family 18h</span>
-<span class="changed">1239     if ( cpu_family() == 0x17 || cpu_family() == 0x18 ) {</span>
-1240       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
-1241       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
-1242         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
-1243       }
-1244       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
-1245         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
-1246       }
-1247 #ifdef COMPILER2
-1248       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
-1249         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1226       // On family 15h processors use XMM and UnalignedLoadStores for Array Copy
+1227       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1228         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1229       }
+1230       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1231         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
+1232       }
+1233     }
+1234 
+1235 #ifdef COMPILER2
+1236     if (cpu_family() &lt; 0x17 &amp;&amp; MaxVectorSize &gt; 16) {
+1237       // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
+1238       FLAG_SET_DEFAULT(MaxVectorSize, 16);
+1239     }
+1240 #endif // COMPILER2
+1241 
+<span class="changed">1242     // Some defaults for AMD family 17h || Hygon family 18h</span>
+<span class="changed">1243     if ( cpu_family() == 0x17 || cpu_family() == 0x18 ) {</span>
+1244       // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
+1245       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
+1246         FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
+1247       }
+1248       if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
+1249         FLAG_SET_DEFAULT(UseUnalignedLoadStores, true);
 1250       }
-1251 #endif
-1252     }
-1253   }
-1254 
-1255   if( is_intel() ) { // Intel cpus specific settings
-1256     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
-1257       UseStoreImmI16 = false; // don't use it on Intel cpus
-1258     }
-1259     if( cpu_family() == 6 || cpu_family() == 15 ) {
+1251 #ifdef COMPILER2
+1252       if (supports_sse4_2() &amp;&amp; FLAG_IS_DEFAULT(UseFPUForSpilling)) {
+1253         FLAG_SET_DEFAULT(UseFPUForSpilling, true);
+1254       }
+1255 #endif
+1256     }
+1257   }
+1258 
+1259   if( is_intel() ) { // Intel cpus specific settings
+1260     if( FLAG_IS_DEFAULT(UseStoreImmI16) ) {
+1261       UseStoreImmI16 = false; // don't use it on Intel cpus
+1262     }
+1263     if( cpu_family() == 6 || cpu_family() == 15 ) {
 
 </pre><hr></hr>
 </pre></td>

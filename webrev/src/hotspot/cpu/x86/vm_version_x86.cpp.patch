@@ -1,6 +1,6 @@
---- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-02-15 20:51:09.245766503 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-02-15 20:51:08.997754932 +0800
-@@ -1161,7 +1161,7 @@
+--- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.877491758 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.601482272 +0800
+@@ -1165,7 +1165,7 @@
      }
    }
  
@@ -9,7 +9,7 @@
      if( supports_sse2() && FLAG_IS_DEFAULT(UseAddressNop) ) {
        // Use it on new AMD cpus starting from Opteron.
        UseAddressNop = true;
-@@ -1235,8 +1235,8 @@
+@@ -1239,8 +1239,8 @@
      }
  #endif // COMPILER2
  

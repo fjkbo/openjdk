@@ -85,7 +85,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
         <a class="print" href="javascript:print()">Print this page</a>
 <pre></pre>
         <pre>
-<hr /><span class="oldmarker">*** 1159,1169 ****</span>
+<hr /><span class="oldmarker">*** 1163,1173 ****</span>
       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
       }
@@ -97,7 +97,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
         UseAddressNop = true;
       }
       if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
-<span class="newmarker">--- 1159,1169 ----</span>
+<span class="newmarker">--- 1163,1173 ----</span>
       if (FLAG_IS_DEFAULT(AllocatePrefetchInstr) &amp;&amp; supports_3dnow_prefetch()) {
         FLAG_SET_DEFAULT(AllocatePrefetchInstr, 3);
       }
@@ -109,7 +109,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
         UseAddressNop = true;
       }
       if( supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseNewLongLShift) ) {
-<hr /><span class="oldmarker">*** 1233,1244 ****</span>
+<hr /><span class="oldmarker">*** 1237,1248 ****</span>
         // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
         FLAG_SET_DEFAULT(MaxVectorSize, 16);
       }
@@ -122,7 +122,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
           FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
         }
         if (supports_sse2() &amp;&amp; FLAG_IS_DEFAULT(UseUnalignedLoadStores)) {
-<span class="newmarker">--- 1233,1244 ----</span>
+<span class="newmarker">--- 1237,1248 ----</span>
         // Limit vectors size to 16 bytes on AMD cpus &lt; 17h.
         FLAG_SET_DEFAULT(MaxVectorSize, 16);
       }

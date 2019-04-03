@@ -1,5 +1,5 @@
---- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-02-15 20:51:08.129714433 +0800
-+++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-02-15 20:51:07.877702676 +0800
+--- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-03 14:28:54.697451207 +0800
++++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-03 14:28:54.425441860 +0800
 @@ -3099,7 +3099,7 @@
      }
      return;
@@ -9,8 +9,8 @@
      //
      // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
      //  1: 0x90
---- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-02-15 20:51:08.737742801 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-02-15 20:51:08.493731417 +0800
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.341473337 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.069463989 +0800
 @@ -340,6 +340,10 @@
      return !is_amd_Barcelona();
    }
@@ -22,9 +22,9 @@
    return false;
  }
  
---- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-02-15 20:51:09.245766503 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-02-15 20:51:08.997754932 +0800
-@@ -1161,7 +1161,7 @@
+--- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.877491758 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.601482272 +0800
+@@ -1165,7 +1165,7 @@
      }
    }
  
@@ -33,7 +33,7 @@
      if( supports_sse2() && FLAG_IS_DEFAULT(UseAddressNop) ) {
        // Use it on new AMD cpus starting from Opteron.
        UseAddressNop = true;
-@@ -1235,8 +1235,8 @@
+@@ -1239,8 +1239,8 @@
      }
  #endif // COMPILER2
  
@@ -44,8 +44,8 @@
        // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
        if (supports_sse2() && FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
          FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
---- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-02-15 20:51:09.761790578 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-02-15 20:51:09.513779007 +0800
+--- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.417510317 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.149501105 +0800
 @@ -495,13 +495,13 @@
        result |= CPU_CX8;
      if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)
