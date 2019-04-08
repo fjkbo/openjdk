@@ -79,7 +79,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
 
 <title>jdk Sdiff src/hotspot/cpu/x86 </title>
 </head><body id="SUNWwebrev">
-<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.hpp.sdiff.html' target='_top'>next &gt</a></center>
 <h2>src/hotspot/cpu/x86/vm_version_ext_x86.cpp</h2>
 <a class="print" href="javascript:print()">Print this page</a>
 <pre></pre>
@@ -133,6 +133,141 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
  361   // find out number of threads per cpu package
  362   int threads_per_package = threads_per_core() * cores_per_cpu();
 
+</pre><hr></hr><pre>
+ 390 }
+ 391 
+ 392 int VM_Version_Ext::number_of_sockets(void) {
+ 393   if (_no_of_packages == 0) {
+ 394     resolve_cpu_information_details();
+ 395   }
+ 396   return _no_of_packages;
+ 397 }
+ 398 
+ 399 const char* VM_Version_Ext::cpu_family_description(void) {
+ 400   int cpu_family_id = extended_cpu_family();
+ 401   if (is_amd()) {
+ 402     return _family_id_amd[cpu_family_id];
+ 403   }
+ 404   if (is_intel()) {
+ 405     if (cpu_family_id == CPU_FAMILY_PENTIUMPRO) {
+ 406       return cpu_model_description();
+ 407     }
+ 408     return _family_id_intel[cpu_family_id];
+ 409   }
+
+
+
+
+ 410   return "Unknown x86";
+ 411 }
+ 412 
+ 413 int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
+ 414   assert(buf != NULL, "buffer is NULL!");
+ 415   assert(buf_len &gt;= CPU_TYPE_DESC_BUF_SIZE, "buffer len should at least be == CPU_TYPE_DESC_BUF_SIZE!");
+ 416 
+ 417   const char* cpu_type = NULL;
+ 418   const char* x64 = NULL;
+ 419 
+ 420   if (is_intel()) {
+ 421     cpu_type = "Intel";
+ 422     x64 = cpu_is_em64t() ? " Intel64" : "";
+ 423   } else if (is_amd()) {
+ 424     cpu_type = "AMD";
+ 425     x64 = cpu_is_em64t() ? " AMD64" : "";
+
+
+
+ 426   } else {
+ 427     cpu_type = "Unknown x86";
+ 428     x64 = cpu_is_em64t() ? " x86_64" : "";
+ 429   }
+ 430 
+ 431   jio_snprintf(buf, buf_len, "%s %s%s SSE SSE2%s%s%s%s%s%s%s%s",
+ 432     cpu_type,
+ 433     cpu_family_description(),
+ 434     supports_ht() ? " (HT)" : "",
+ 435     supports_sse3() ? " SSE3" : "",
+ 436     supports_ssse3() ? " SSSE3" : "",
+ 437     supports_sse4_1() ? " SSE4.1" : "",
+ 438     supports_sse4_2() ? " SSE4.2" : "",
+ 439     supports_sse4a() ? " SSE4A" : "",
+ 440     is_netburst() ? " Netburst" : "",
+ 441     is_intel_family_core() ? " Core" : "",
+ 442     x64);
+ 443 
+ 444   return OS_OK;
+ 445 }
+
+</pre><hr></hr><pre>
+ 715 
+ 716 const char* const VM_Version_Ext::_family_id_amd[] = {
+ 717   "",
+ 718   "",
+ 719   "",
+ 720   "",
+ 721   "5x86",
+ 722   "K5/K6",
+ 723   "Athlon/AthlonXP",
+ 724   "",
+ 725   "",
+ 726   "",
+ 727   "",
+ 728   "",
+ 729   "",
+ 730   "",
+ 731   "",
+ 732   "Opteron/Athlon64",
+ 733   "Opteron QC/Phenom"  // Barcelona et.al.
+ 734 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 735 // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+ 736 // September 2013, Vol 3C Table 35-1
+ 737 const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
+ 738   "",
+ 739   "Pentium Pro",
+ 740   "",
+ 741   "Pentium II model 3",
+ 742   "",
+ 743   "Pentium II model 5/Xeon/Celeron",
+ 744   "Celeron",
+ 745   "Pentium III/Pentium III Xeon",
+ 746   "Pentium III/Pentium III Xeon",
+ 747   "Pentium M model 9",    // Yonah
+ 748   "Pentium III, model A",
+ 749   "Pentium III, model B",
+ 750   "",
+ 751   "Pentium M model D",    // Dothan
+ 752   "",
+ 753   "Core 2",               // 0xf Woodcrest/Conroe/Merom/Kentsfield/Clovertown
+ 754   "",
+
 </pre><hr></hr>
 </pre></td><td><pre>
 
@@ -182,8 +317,143 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
  365   // find out number of threads per cpu package
  366   int threads_per_package = threads_per_core() * cores_per_cpu();
 
+</pre><hr></hr><pre>
+ 394 }
+ 395 
+ 396 int VM_Version_Ext::number_of_sockets(void) {
+ 397   if (_no_of_packages == 0) {
+ 398     resolve_cpu_information_details();
+ 399   }
+ 400   return _no_of_packages;
+ 401 }
+ 402 
+ 403 const char* VM_Version_Ext::cpu_family_description(void) {
+ 404   int cpu_family_id = extended_cpu_family();
+ 405   if (is_amd()) {
+ 406     return _family_id_amd[cpu_family_id];
+ 407   }
+ 408   if (is_intel()) {
+ 409     if (cpu_family_id == CPU_FAMILY_PENTIUMPRO) {
+ 410       return cpu_model_description();
+ 411     }
+ 412     return _family_id_intel[cpu_family_id];
+ 413   }
+<span class="new"> 414   if (is_hygon()) {</span>
+<span class="new"> 415     return _family_id_hygon[cpu_family_id];</span>
+<span class="new"> 416   }</span>
+<span class="new"> 417 </span>
+ 418   return "Unknown x86";
+ 419 }
+ 420 
+ 421 int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
+ 422   assert(buf != NULL, "buffer is NULL!");
+ 423   assert(buf_len &gt;= CPU_TYPE_DESC_BUF_SIZE, "buffer len should at least be == CPU_TYPE_DESC_BUF_SIZE!");
+ 424 
+ 425   const char* cpu_type = NULL;
+ 426   const char* x64 = NULL;
+ 427 
+ 428   if (is_intel()) {
+ 429     cpu_type = "Intel";
+ 430     x64 = cpu_is_em64t() ? " Intel64" : "";
+ 431   } else if (is_amd()) {
+ 432     cpu_type = "AMD";
+ 433     x64 = cpu_is_em64t() ? " AMD64" : "";
+<span class="new"> 434   } else if (is_hygon()) {</span>
+<span class="new"> 435         cpu_type = "HYGON";</span>
+<span class="new"> 436         x64 = cpu_is_em64t() ? " AMD64" : "";</span>
+ 437   } else {
+ 438     cpu_type = "Unknown x86";
+ 439     x64 = cpu_is_em64t() ? " x86_64" : "";
+ 440   }
+ 441 
+ 442   jio_snprintf(buf, buf_len, "%s %s%s SSE SSE2%s%s%s%s%s%s%s%s",
+ 443     cpu_type,
+ 444     cpu_family_description(),
+ 445     supports_ht() ? " (HT)" : "",
+ 446     supports_sse3() ? " SSE3" : "",
+ 447     supports_ssse3() ? " SSSE3" : "",
+ 448     supports_sse4_1() ? " SSE4.1" : "",
+ 449     supports_sse4_2() ? " SSE4.2" : "",
+ 450     supports_sse4a() ? " SSE4A" : "",
+ 451     is_netburst() ? " Netburst" : "",
+ 452     is_intel_family_core() ? " Core" : "",
+ 453     x64);
+ 454 
+ 455   return OS_OK;
+ 456 }
+
+</pre><hr></hr><pre>
+ 726 
+ 727 const char* const VM_Version_Ext::_family_id_amd[] = {
+ 728   "",
+ 729   "",
+ 730   "",
+ 731   "",
+ 732   "5x86",
+ 733   "K5/K6",
+ 734   "Athlon/AthlonXP",
+ 735   "",
+ 736   "",
+ 737   "",
+ 738   "",
+ 739   "",
+ 740   "",
+ 741   "",
+ 742   "",
+ 743   "Opteron/Athlon64",
+ 744   "Opteron QC/Phenom"  // Barcelona et.al.
+ 745 };
+<span class="new"> 746 const char* const VM_Version_Ext::_family_id_hygon[] = {</span>
+<span class="new"> 747   "",   //family 0</span>
+<span class="new"> 748   "",</span>
+<span class="new"> 749   "",</span>
+<span class="new"> 750   "",</span>
+<span class="new"> 751   "",</span>
+<span class="new"> 752   "",</span>
+<span class="new"> 753   "",</span>
+<span class="new"> 754   "",</span>
+<span class="new"> 755   "",</span>
+<span class="new"> 756   "",</span>
+<span class="new"> 757   "",</span>
+<span class="new"> 758   "",</span>
+<span class="new"> 759   "",</span>
+<span class="new"> 760   "",</span>
+<span class="new"> 761   "",</span>
+<span class="new"> 762   "",</span>
+<span class="new"> 763   "",</span>
+<span class="new"> 764   "",</span>
+<span class="new"> 765   "",</span>
+<span class="new"> 766   "",</span>
+<span class="new"> 767   "",</span>
+<span class="new"> 768   "",</span>
+<span class="new"> 769   "",</span>
+<span class="new"> 770   "",</span>
+<span class="new"> 771   "HygonGenuine",       //family 24</span>
+<span class="new"> 772 };</span>
+<span class="new"> 773 </span>
+ 774 // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+ 775 // September 2013, Vol 3C Table 35-1
+ 776 const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
+ 777   "",
+ 778   "Pentium Pro",
+ 779   "",
+ 780   "Pentium II model 3",
+ 781   "",
+ 782   "Pentium II model 5/Xeon/Celeron",
+ 783   "Celeron",
+ 784   "Pentium III/Pentium III Xeon",
+ 785   "Pentium III/Pentium III Xeon",
+ 786   "Pentium M model 9",    // Yonah
+ 787   "Pentium III, model A",
+ 788   "Pentium III, model B",
+ 789   "",
+ 790   "Pentium M model D",    // Dothan
+ 791   "",
+ 792   "Core 2",               // 0xf Woodcrest/Conroe/Merom/Kentsfield/Clovertown
+ 793   "",
+
 </pre><hr></hr>
 </pre></td>
 </tr></table>
-<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.sdiff.html' target='_top'>next &gt</a></center>
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.sdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.hpp.sdiff.html' target='_top'>next &gt</a></center>
 </body></html>

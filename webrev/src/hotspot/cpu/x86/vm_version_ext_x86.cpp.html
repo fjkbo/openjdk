@@ -493,561 +493,596 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
  411     }
  412     return _family_id_intel[cpu_family_id];
  413   }
- 414   return "Unknown x86";
- 415 }
- 416 
- 417 int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
- 418   assert(buf != NULL, "buffer is NULL!");
- 419   assert(buf_len &gt;= CPU_TYPE_DESC_BUF_SIZE, "buffer len should at least be == CPU_TYPE_DESC_BUF_SIZE!");
+ 414   if (is_hygon()) {
+ 415     return _family_id_hygon[cpu_family_id];
+ 416   }
+ 417 
+ 418   return "Unknown x86";
+ 419 }
  420 
- 421   const char* cpu_type = NULL;
- 422   const char* x64 = NULL;
- 423 
- 424   if (is_intel()) {
- 425     cpu_type = "Intel";
- 426     x64 = cpu_is_em64t() ? " Intel64" : "";
- 427   } else if (is_amd()) {
- 428     cpu_type = "AMD";
- 429     x64 = cpu_is_em64t() ? " AMD64" : "";
- 430   } else {
- 431     cpu_type = "Unknown x86";
- 432     x64 = cpu_is_em64t() ? " x86_64" : "";
- 433   }
- 434 
- 435   jio_snprintf(buf, buf_len, "%s %s%s SSE SSE2%s%s%s%s%s%s%s%s",
- 436     cpu_type,
- 437     cpu_family_description(),
- 438     supports_ht() ? " (HT)" : "",
- 439     supports_sse3() ? " SSE3" : "",
- 440     supports_ssse3() ? " SSSE3" : "",
- 441     supports_sse4_1() ? " SSE4.1" : "",
- 442     supports_sse4_2() ? " SSE4.2" : "",
- 443     supports_sse4a() ? " SSE4A" : "",
- 444     is_netburst() ? " Netburst" : "",
- 445     is_intel_family_core() ? " Core" : "",
- 446     x64);
- 447 
- 448   return OS_OK;
- 449 }
- 450 
- 451 int VM_Version_Ext::cpu_extended_brand_string(char* const buf, size_t buf_len) {
- 452   assert(buf != NULL, "buffer is NULL!");
- 453   assert(buf_len &gt;= CPU_EBS_MAX_LENGTH, "buffer len should at least be == CPU_EBS_MAX_LENGTH!");
- 454   assert(getCPUIDBrandString_stub != NULL, "not initialized");
- 455 
- 456   // invoke newly generated asm code to fetch CPU Brand String
- 457   getCPUIDBrandString_stub(&amp;_cpuid_info);
- 458 
- 459   // fetch results into buffer
- 460   *((uint32_t*) &amp;buf[0])  = _cpuid_info.proc_name_0;
- 461   *((uint32_t*) &amp;buf[4])  = _cpuid_info.proc_name_1;
- 462   *((uint32_t*) &amp;buf[8])  = _cpuid_info.proc_name_2;
- 463   *((uint32_t*) &amp;buf[12]) = _cpuid_info.proc_name_3;
- 464   *((uint32_t*) &amp;buf[16]) = _cpuid_info.proc_name_4;
- 465   *((uint32_t*) &amp;buf[20]) = _cpuid_info.proc_name_5;
- 466   *((uint32_t*) &amp;buf[24]) = _cpuid_info.proc_name_6;
- 467   *((uint32_t*) &amp;buf[28]) = _cpuid_info.proc_name_7;
- 468   *((uint32_t*) &amp;buf[32]) = _cpuid_info.proc_name_8;
- 469   *((uint32_t*) &amp;buf[36]) = _cpuid_info.proc_name_9;
- 470   *((uint32_t*) &amp;buf[40]) = _cpuid_info.proc_name_10;
- 471   *((uint32_t*) &amp;buf[44]) = _cpuid_info.proc_name_11;
- 472 
- 473   return OS_OK;
- 474 }
- 475 
- 476 size_t VM_Version_Ext::cpu_write_support_string(char* const buf, size_t buf_len) {
- 477   guarantee(buf != NULL, "buffer is NULL!");
- 478   guarantee(buf_len &gt; 0, "buffer len not enough!");
+ 421 int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
+ 422   assert(buf != NULL, "buffer is NULL!");
+ 423   assert(buf_len &gt;= CPU_TYPE_DESC_BUF_SIZE, "buffer len should at least be == CPU_TYPE_DESC_BUF_SIZE!");
+ 424 
+ 425   const char* cpu_type = NULL;
+ 426   const char* x64 = NULL;
+ 427 
+ 428   if (is_intel()) {
+ 429     cpu_type = "Intel";
+ 430     x64 = cpu_is_em64t() ? " Intel64" : "";
+ 431   } else if (is_amd()) {
+ 432     cpu_type = "AMD";
+ 433     x64 = cpu_is_em64t() ? " AMD64" : "";
+ 434   } else if (is_hygon()) {
+ 435         cpu_type = "HYGON";
+ 436         x64 = cpu_is_em64t() ? " AMD64" : "";
+ 437   } else {
+ 438     cpu_type = "Unknown x86";
+ 439     x64 = cpu_is_em64t() ? " x86_64" : "";
+ 440   }
+ 441 
+ 442   jio_snprintf(buf, buf_len, "%s %s%s SSE SSE2%s%s%s%s%s%s%s%s",
+ 443     cpu_type,
+ 444     cpu_family_description(),
+ 445     supports_ht() ? " (HT)" : "",
+ 446     supports_sse3() ? " SSE3" : "",
+ 447     supports_ssse3() ? " SSSE3" : "",
+ 448     supports_sse4_1() ? " SSE4.1" : "",
+ 449     supports_sse4_2() ? " SSE4.2" : "",
+ 450     supports_sse4a() ? " SSE4A" : "",
+ 451     is_netburst() ? " Netburst" : "",
+ 452     is_intel_family_core() ? " Core" : "",
+ 453     x64);
+ 454 
+ 455   return OS_OK;
+ 456 }
+ 457 
+ 458 int VM_Version_Ext::cpu_extended_brand_string(char* const buf, size_t buf_len) {
+ 459   assert(buf != NULL, "buffer is NULL!");
+ 460   assert(buf_len &gt;= CPU_EBS_MAX_LENGTH, "buffer len should at least be == CPU_EBS_MAX_LENGTH!");
+ 461   assert(getCPUIDBrandString_stub != NULL, "not initialized");
+ 462 
+ 463   // invoke newly generated asm code to fetch CPU Brand String
+ 464   getCPUIDBrandString_stub(&amp;_cpuid_info);
+ 465 
+ 466   // fetch results into buffer
+ 467   *((uint32_t*) &amp;buf[0])  = _cpuid_info.proc_name_0;
+ 468   *((uint32_t*) &amp;buf[4])  = _cpuid_info.proc_name_1;
+ 469   *((uint32_t*) &amp;buf[8])  = _cpuid_info.proc_name_2;
+ 470   *((uint32_t*) &amp;buf[12]) = _cpuid_info.proc_name_3;
+ 471   *((uint32_t*) &amp;buf[16]) = _cpuid_info.proc_name_4;
+ 472   *((uint32_t*) &amp;buf[20]) = _cpuid_info.proc_name_5;
+ 473   *((uint32_t*) &amp;buf[24]) = _cpuid_info.proc_name_6;
+ 474   *((uint32_t*) &amp;buf[28]) = _cpuid_info.proc_name_7;
+ 475   *((uint32_t*) &amp;buf[32]) = _cpuid_info.proc_name_8;
+ 476   *((uint32_t*) &amp;buf[36]) = _cpuid_info.proc_name_9;
+ 477   *((uint32_t*) &amp;buf[40]) = _cpuid_info.proc_name_10;
+ 478   *((uint32_t*) &amp;buf[44]) = _cpuid_info.proc_name_11;
  479 
- 480   unsigned int flag = 0;
- 481   unsigned int fi = 0;
- 482   size_t       written = 0;
- 483   const char*  prefix = "";
- 484 
- 485 #define WRITE_TO_BUF(string)                                                          \
- 486   {                                                                                   \
- 487     int res = jio_snprintf(&amp;buf[written], buf_len - written, "%s%s", prefix, string); \
- 488     if (res &lt; 0) {                                                                    \
- 489       return buf_len - 1;                                                             \
- 490     }                                                                                 \
- 491     written += res;                                                                   \
- 492     if (prefix[0] == '\0') {                                                          \
- 493       prefix = ", ";                                                                  \
- 494     }                                                                                 \
- 495   }
- 496 
- 497   for (flag = 1, fi = 0; flag &lt;= 0x20000000 ; flag &lt;&lt;= 1, fi++) {
- 498     if (flag == HTT_FLAG &amp;&amp; (((_cpuid_info.std_cpuid1_ebx.value &gt;&gt; 16) &amp; 0xff) &lt;= 1)) {
- 499       continue; /* no hyperthreading */
- 500     } else if (flag == SEP_FLAG &amp;&amp; (cpu_family() == CPU_FAMILY_PENTIUMPRO &amp;&amp; ((_cpuid_info.std_cpuid1_eax.value &amp; 0xff) &lt; 0x33))) {
- 501       continue; /* no fast system call */
- 502     }
- 503     if ((_cpuid_info.std_cpuid1_edx.value &amp; flag) &amp;&amp; strlen(_feature_edx_id[fi]) &gt; 0) {
- 504       WRITE_TO_BUF(_feature_edx_id[fi]);
- 505     }
- 506   }
- 507 
- 508   for (flag = 1, fi = 0; flag &lt;= 0x20000000; flag &lt;&lt;= 1, fi++) {
- 509     if ((_cpuid_info.std_cpuid1_ecx.value &amp; flag) &amp;&amp; strlen(_feature_ecx_id[fi]) &gt; 0) {
- 510       WRITE_TO_BUF(_feature_ecx_id[fi]);
- 511     }
- 512   }
- 513 
- 514   for (flag = 1, fi = 0; flag &lt;= 0x20000000 ; flag &lt;&lt;= 1, fi++) {
- 515     if ((_cpuid_info.ext_cpuid1_ecx.value &amp; flag) &amp;&amp; strlen(_feature_extended_ecx_id[fi]) &gt; 0) {
- 516       WRITE_TO_BUF(_feature_extended_ecx_id[fi]);
- 517     }
- 518   }
- 519 
- 520   for (flag = 1, fi = 0; flag &lt;= 0x20000000; flag &lt;&lt;= 1, fi++) {
- 521     if ((_cpuid_info.ext_cpuid1_edx.value &amp; flag) &amp;&amp; strlen(_feature_extended_edx_id[fi]) &gt; 0) {
- 522       WRITE_TO_BUF(_feature_extended_edx_id[fi]);
- 523     }
- 524   }
- 525 
- 526   if (supports_tscinv_bit()) {
- 527       WRITE_TO_BUF("Invariant TSC");
- 528   }
- 529 
- 530   return written;
- 531 }
+ 480   return OS_OK;
+ 481 }
+ 482 
+ 483 size_t VM_Version_Ext::cpu_write_support_string(char* const buf, size_t buf_len) {
+ 484   guarantee(buf != NULL, "buffer is NULL!");
+ 485   guarantee(buf_len &gt; 0, "buffer len not enough!");
+ 486 
+ 487   unsigned int flag = 0;
+ 488   unsigned int fi = 0;
+ 489   size_t       written = 0;
+ 490   const char*  prefix = "";
+ 491 
+ 492 #define WRITE_TO_BUF(string)                                                          \
+ 493   {                                                                                   \
+ 494     int res = jio_snprintf(&amp;buf[written], buf_len - written, "%s%s", prefix, string); \
+ 495     if (res &lt; 0) {                                                                    \
+ 496       return buf_len - 1;                                                             \
+ 497     }                                                                                 \
+ 498     written += res;                                                                   \
+ 499     if (prefix[0] == '\0') {                                                          \
+ 500       prefix = ", ";                                                                  \
+ 501     }                                                                                 \
+ 502   }
+ 503 
+ 504   for (flag = 1, fi = 0; flag &lt;= 0x20000000 ; flag &lt;&lt;= 1, fi++) {
+ 505     if (flag == HTT_FLAG &amp;&amp; (((_cpuid_info.std_cpuid1_ebx.value &gt;&gt; 16) &amp; 0xff) &lt;= 1)) {
+ 506       continue; /* no hyperthreading */
+ 507     } else if (flag == SEP_FLAG &amp;&amp; (cpu_family() == CPU_FAMILY_PENTIUMPRO &amp;&amp; ((_cpuid_info.std_cpuid1_eax.value &amp; 0xff) &lt; 0x33))) {
+ 508       continue; /* no fast system call */
+ 509     }
+ 510     if ((_cpuid_info.std_cpuid1_edx.value &amp; flag) &amp;&amp; strlen(_feature_edx_id[fi]) &gt; 0) {
+ 511       WRITE_TO_BUF(_feature_edx_id[fi]);
+ 512     }
+ 513   }
+ 514 
+ 515   for (flag = 1, fi = 0; flag &lt;= 0x20000000; flag &lt;&lt;= 1, fi++) {
+ 516     if ((_cpuid_info.std_cpuid1_ecx.value &amp; flag) &amp;&amp; strlen(_feature_ecx_id[fi]) &gt; 0) {
+ 517       WRITE_TO_BUF(_feature_ecx_id[fi]);
+ 518     }
+ 519   }
+ 520 
+ 521   for (flag = 1, fi = 0; flag &lt;= 0x20000000 ; flag &lt;&lt;= 1, fi++) {
+ 522     if ((_cpuid_info.ext_cpuid1_ecx.value &amp; flag) &amp;&amp; strlen(_feature_extended_ecx_id[fi]) &gt; 0) {
+ 523       WRITE_TO_BUF(_feature_extended_ecx_id[fi]);
+ 524     }
+ 525   }
+ 526 
+ 527   for (flag = 1, fi = 0; flag &lt;= 0x20000000; flag &lt;&lt;= 1, fi++) {
+ 528     if ((_cpuid_info.ext_cpuid1_edx.value &amp; flag) &amp;&amp; strlen(_feature_extended_edx_id[fi]) &gt; 0) {
+ 529       WRITE_TO_BUF(_feature_extended_edx_id[fi]);
+ 530     }
+ 531   }
  532 
- 533 /**
- 534  * Write a detailed description of the cpu to a given buffer, including
- 535  * feature set.
- 536  */
- 537 int VM_Version_Ext::cpu_detailed_description(char* const buf, size_t buf_len) {
- 538   assert(buf != NULL, "buffer is NULL!");
- 539   assert(buf_len &gt;= CPU_DETAILED_DESC_BUF_SIZE, "buffer len should at least be == CPU_DETAILED_DESC_BUF_SIZE!");
- 540 
- 541   static const char* unknown = "&lt;unknown&gt;";
- 542   char               vendor_id[VENDOR_LENGTH];
- 543   const char*        family = NULL;
- 544   const char*        model = NULL;
- 545   const char*        brand = NULL;
- 546   int                outputLen = 0;
+ 533   if (supports_tscinv_bit()) {
+ 534       WRITE_TO_BUF("Invariant TSC");
+ 535   }
+ 536 
+ 537   return written;
+ 538 }
+ 539 
+ 540 /**
+ 541  * Write a detailed description of the cpu to a given buffer, including
+ 542  * feature set.
+ 543  */
+ 544 int VM_Version_Ext::cpu_detailed_description(char* const buf, size_t buf_len) {
+ 545   assert(buf != NULL, "buffer is NULL!");
+ 546   assert(buf_len &gt;= CPU_DETAILED_DESC_BUF_SIZE, "buffer len should at least be == CPU_DETAILED_DESC_BUF_SIZE!");
  547 
- 548   family = cpu_family_description();
- 549   if (family == NULL) {
- 550     family = unknown;
- 551   }
- 552 
- 553   model = cpu_model_description();
- 554   if (model == NULL) {
- 555     model = unknown;
- 556   }
- 557 
- 558   brand = cpu_brand_string();
+ 548   static const char* unknown = "&lt;unknown&gt;";
+ 549   char               vendor_id[VENDOR_LENGTH];
+ 550   const char*        family = NULL;
+ 551   const char*        model = NULL;
+ 552   const char*        brand = NULL;
+ 553   int                outputLen = 0;
+ 554 
+ 555   family = cpu_family_description();
+ 556   if (family == NULL) {
+ 557     family = unknown;
+ 558   }
  559 
- 560   if (brand == NULL) {
- 561     brand = cpu_brand();
- 562     if (brand == NULL) {
- 563       brand = unknown;
- 564     }
- 565   }
+ 560   model = cpu_model_description();
+ 561   if (model == NULL) {
+ 562     model = unknown;
+ 563   }
+ 564 
+ 565   brand = cpu_brand_string();
  566 
- 567   *((uint32_t*) &amp;vendor_id[0]) = _cpuid_info.std_vendor_name_0;
- 568   *((uint32_t*) &amp;vendor_id[4]) = _cpuid_info.std_vendor_name_2;
- 569   *((uint32_t*) &amp;vendor_id[8]) = _cpuid_info.std_vendor_name_1;
- 570   vendor_id[VENDOR_LENGTH-1] = '\0';
- 571 
- 572   outputLen = jio_snprintf(buf, buf_len, "Brand: %s, Vendor: %s\n"
- 573     "Family: %s (0x%x), Model: %s (0x%x), Stepping: 0x%x\n"
- 574     "Ext. family: 0x%x, Ext. model: 0x%x, Type: 0x%x, Signature: 0x%8.8x\n"
- 575     "Features: ebx: 0x%8.8x, ecx: 0x%8.8x, edx: 0x%8.8x\n"
- 576     "Ext. features: eax: 0x%8.8x, ebx: 0x%8.8x, ecx: 0x%8.8x, edx: 0x%8.8x\n"
- 577     "Supports: ",
- 578     brand,
- 579     vendor_id,
- 580     family,
- 581     extended_cpu_family(),
- 582     model,
- 583     extended_cpu_model(),
- 584     cpu_stepping(),
- 585     _cpuid_info.std_cpuid1_eax.bits.ext_family,
- 586     _cpuid_info.std_cpuid1_eax.bits.ext_model,
- 587     _cpuid_info.std_cpuid1_eax.bits.proc_type,
- 588     _cpuid_info.std_cpuid1_eax.value,
- 589     _cpuid_info.std_cpuid1_ebx.value,
- 590     _cpuid_info.std_cpuid1_ecx.value,
- 591     _cpuid_info.std_cpuid1_edx.value,
- 592     _cpuid_info.ext_cpuid1_eax,
- 593     _cpuid_info.ext_cpuid1_ebx,
- 594     _cpuid_info.ext_cpuid1_ecx,
- 595     _cpuid_info.ext_cpuid1_edx);
- 596 
- 597   if (outputLen &lt; 0 || (size_t) outputLen &gt;= buf_len - 1) {
- 598     if (buf_len &gt; 0) { buf[buf_len-1] = '\0'; }
- 599     return OS_ERR;
- 600   }
- 601 
- 602   cpu_write_support_string(&amp;buf[outputLen], buf_len - outputLen);
+ 567   if (brand == NULL) {
+ 568     brand = cpu_brand();
+ 569     if (brand == NULL) {
+ 570       brand = unknown;
+ 571     }
+ 572   }
+ 573 
+ 574   *((uint32_t*) &amp;vendor_id[0]) = _cpuid_info.std_vendor_name_0;
+ 575   *((uint32_t*) &amp;vendor_id[4]) = _cpuid_info.std_vendor_name_2;
+ 576   *((uint32_t*) &amp;vendor_id[8]) = _cpuid_info.std_vendor_name_1;
+ 577   vendor_id[VENDOR_LENGTH-1] = '\0';
+ 578 
+ 579   outputLen = jio_snprintf(buf, buf_len, "Brand: %s, Vendor: %s\n"
+ 580     "Family: %s (0x%x), Model: %s (0x%x), Stepping: 0x%x\n"
+ 581     "Ext. family: 0x%x, Ext. model: 0x%x, Type: 0x%x, Signature: 0x%8.8x\n"
+ 582     "Features: ebx: 0x%8.8x, ecx: 0x%8.8x, edx: 0x%8.8x\n"
+ 583     "Ext. features: eax: 0x%8.8x, ebx: 0x%8.8x, ecx: 0x%8.8x, edx: 0x%8.8x\n"
+ 584     "Supports: ",
+ 585     brand,
+ 586     vendor_id,
+ 587     family,
+ 588     extended_cpu_family(),
+ 589     model,
+ 590     extended_cpu_model(),
+ 591     cpu_stepping(),
+ 592     _cpuid_info.std_cpuid1_eax.bits.ext_family,
+ 593     _cpuid_info.std_cpuid1_eax.bits.ext_model,
+ 594     _cpuid_info.std_cpuid1_eax.bits.proc_type,
+ 595     _cpuid_info.std_cpuid1_eax.value,
+ 596     _cpuid_info.std_cpuid1_ebx.value,
+ 597     _cpuid_info.std_cpuid1_ecx.value,
+ 598     _cpuid_info.std_cpuid1_edx.value,
+ 599     _cpuid_info.ext_cpuid1_eax,
+ 600     _cpuid_info.ext_cpuid1_ebx,
+ 601     _cpuid_info.ext_cpuid1_ecx,
+ 602     _cpuid_info.ext_cpuid1_edx);
  603 
- 604   return OS_OK;
- 605 }
- 606 
- 607 const char* VM_Version_Ext::cpu_name(void) {
- 608   char cpu_type_desc[CPU_TYPE_DESC_BUF_SIZE];
- 609   size_t cpu_desc_len = sizeof(cpu_type_desc);
+ 604   if (outputLen &lt; 0 || (size_t) outputLen &gt;= buf_len - 1) {
+ 605     if (buf_len &gt; 0) { buf[buf_len-1] = '\0'; }
+ 606     return OS_ERR;
+ 607   }
+ 608 
+ 609   cpu_write_support_string(&amp;buf[outputLen], buf_len - outputLen);
  610 
- 611   cpu_type_description(cpu_type_desc, cpu_desc_len);
- 612   char* tmp = NEW_C_HEAP_ARRAY_RETURN_NULL(char, cpu_desc_len, mtTracing);
- 613   if (NULL == tmp) {
- 614     return NULL;
- 615   }
- 616   strncpy(tmp, cpu_type_desc, cpu_desc_len);
- 617   return tmp;
- 618 }
- 619 
- 620 const char* VM_Version_Ext::cpu_description(void) {
- 621   char cpu_detailed_desc_buffer[CPU_DETAILED_DESC_BUF_SIZE];
- 622   size_t cpu_detailed_desc_len = sizeof(cpu_detailed_desc_buffer);
- 623 
- 624   cpu_detailed_description(cpu_detailed_desc_buffer, cpu_detailed_desc_len);
- 625 
- 626   char* tmp = NEW_C_HEAP_ARRAY_RETURN_NULL(char, cpu_detailed_desc_len, mtTracing);
- 627 
- 628   if (NULL == tmp) {
- 629     return NULL;
- 630   }
- 631 
- 632   strncpy(tmp, cpu_detailed_desc_buffer, cpu_detailed_desc_len);
- 633   return tmp;
- 634 }
- 635 
- 636 /**
- 637  *  See Intel Application note 485 (chapter 10) for details
- 638  *  on frequency extraction from cpu brand string.
- 639  *  http://www.intel.com/content/dam/www/public/us/en/documents/application-notes/processor-identification-cpuid-instruction-note.pdf
- 640  *
- 641  */
- 642 jlong VM_Version_Ext::max_qualified_cpu_freq_from_brand_string(void) {
- 643   // get brand string
- 644   const char* const brand_string = cpu_brand_string();
- 645   if (brand_string == NULL) {
- 646     return 0;
- 647   }
- 648 
- 649   const u8 MEGA = 1000000;
- 650   u8 multiplier = 0;
- 651   jlong frequency = 0;
- 652 
- 653   // the frequency information in the cpu brand string
- 654   // is given in either of two formats "x.xxyHz" or "xxxxyHz",
- 655   // where y=M,G,T and x is digits
- 656   const char* Hz_location = strchr(brand_string, 'H');
- 657 
- 658   if (Hz_location != NULL) {
- 659     if (*(Hz_location + 1) == 'z') {
- 660       // switch on y in "yHz"
- 661       switch(*(Hz_location - 1)) {
- 662         case 'M' :
- 663           // Set multiplier to frequency is in Hz
- 664           multiplier = MEGA;
- 665           break;
- 666         case 'G' :
- 667           multiplier = MEGA * 1000;
- 668           break;
- 669         case 'T' :
- 670           multiplier = MEGA * 1000 * 1000;
- 671           break;
- 672       }
- 673     }
- 674   }
- 675 
- 676   if (multiplier &gt; 0) {
- 677     // compute frequency (in Hz) from brand string
- 678     if (*(Hz_location - 4) == '.') { // if format is "x.xx"
- 679       frequency =  (jlong)(*(Hz_location - 5) - '0') * (multiplier);
- 680       frequency += (jlong)(*(Hz_location - 3) - '0') * (multiplier / 10);
- 681       frequency += (jlong)(*(Hz_location - 2) - '0') * (multiplier / 100);
- 682     } else { // format is "xxxx"
- 683       frequency =  (jlong)(*(Hz_location - 5) - '0') * 1000;
- 684       frequency += (jlong)(*(Hz_location - 4) - '0') * 100;
- 685       frequency += (jlong)(*(Hz_location - 3) - '0') * 10;
- 686       frequency += (jlong)(*(Hz_location - 2) - '0');
- 687       frequency *= multiplier;
- 688     }
- 689   }
- 690   return frequency;
- 691 }
- 692 
- 693 
- 694 jlong VM_Version_Ext::maximum_qualified_cpu_frequency(void) {
- 695   if (_max_qualified_cpu_frequency == 0) {
- 696     _max_qualified_cpu_frequency = max_qualified_cpu_freq_from_brand_string();
- 697   }
- 698   return _max_qualified_cpu_frequency;
- 699 }
+ 611   return OS_OK;
+ 612 }
+ 613 
+ 614 const char* VM_Version_Ext::cpu_name(void) {
+ 615   char cpu_type_desc[CPU_TYPE_DESC_BUF_SIZE];
+ 616   size_t cpu_desc_len = sizeof(cpu_type_desc);
+ 617 
+ 618   cpu_type_description(cpu_type_desc, cpu_desc_len);
+ 619   char* tmp = NEW_C_HEAP_ARRAY_RETURN_NULL(char, cpu_desc_len, mtTracing);
+ 620   if (NULL == tmp) {
+ 621     return NULL;
+ 622   }
+ 623   strncpy(tmp, cpu_type_desc, cpu_desc_len);
+ 624   return tmp;
+ 625 }
+ 626 
+ 627 const char* VM_Version_Ext::cpu_description(void) {
+ 628   char cpu_detailed_desc_buffer[CPU_DETAILED_DESC_BUF_SIZE];
+ 629   size_t cpu_detailed_desc_len = sizeof(cpu_detailed_desc_buffer);
+ 630 
+ 631   cpu_detailed_description(cpu_detailed_desc_buffer, cpu_detailed_desc_len);
+ 632 
+ 633   char* tmp = NEW_C_HEAP_ARRAY_RETURN_NULL(char, cpu_detailed_desc_len, mtTracing);
+ 634 
+ 635   if (NULL == tmp) {
+ 636     return NULL;
+ 637   }
+ 638 
+ 639   strncpy(tmp, cpu_detailed_desc_buffer, cpu_detailed_desc_len);
+ 640   return tmp;
+ 641 }
+ 642 
+ 643 /**
+ 644  *  See Intel Application note 485 (chapter 10) for details
+ 645  *  on frequency extraction from cpu brand string.
+ 646  *  http://www.intel.com/content/dam/www/public/us/en/documents/application-notes/processor-identification-cpuid-instruction-note.pdf
+ 647  *
+ 648  */
+ 649 jlong VM_Version_Ext::max_qualified_cpu_freq_from_brand_string(void) {
+ 650   // get brand string
+ 651   const char* const brand_string = cpu_brand_string();
+ 652   if (brand_string == NULL) {
+ 653     return 0;
+ 654   }
+ 655 
+ 656   const u8 MEGA = 1000000;
+ 657   u8 multiplier = 0;
+ 658   jlong frequency = 0;
+ 659 
+ 660   // the frequency information in the cpu brand string
+ 661   // is given in either of two formats "x.xxyHz" or "xxxxyHz",
+ 662   // where y=M,G,T and x is digits
+ 663   const char* Hz_location = strchr(brand_string, 'H');
+ 664 
+ 665   if (Hz_location != NULL) {
+ 666     if (*(Hz_location + 1) == 'z') {
+ 667       // switch on y in "yHz"
+ 668       switch(*(Hz_location - 1)) {
+ 669         case 'M' :
+ 670           // Set multiplier to frequency is in Hz
+ 671           multiplier = MEGA;
+ 672           break;
+ 673         case 'G' :
+ 674           multiplier = MEGA * 1000;
+ 675           break;
+ 676         case 'T' :
+ 677           multiplier = MEGA * 1000 * 1000;
+ 678           break;
+ 679       }
+ 680     }
+ 681   }
+ 682 
+ 683   if (multiplier &gt; 0) {
+ 684     // compute frequency (in Hz) from brand string
+ 685     if (*(Hz_location - 4) == '.') { // if format is "x.xx"
+ 686       frequency =  (jlong)(*(Hz_location - 5) - '0') * (multiplier);
+ 687       frequency += (jlong)(*(Hz_location - 3) - '0') * (multiplier / 10);
+ 688       frequency += (jlong)(*(Hz_location - 2) - '0') * (multiplier / 100);
+ 689     } else { // format is "xxxx"
+ 690       frequency =  (jlong)(*(Hz_location - 5) - '0') * 1000;
+ 691       frequency += (jlong)(*(Hz_location - 4) - '0') * 100;
+ 692       frequency += (jlong)(*(Hz_location - 3) - '0') * 10;
+ 693       frequency += (jlong)(*(Hz_location - 2) - '0');
+ 694       frequency *= multiplier;
+ 695     }
+ 696   }
+ 697   return frequency;
+ 698 }
+ 699 
  700 
- 701 const char* const VM_Version_Ext::_family_id_intel[] = {
- 702   "8086/8088",
- 703   "",
- 704   "286",
- 705   "386",
- 706   "486",
- 707   "Pentium",
- 708   "Pentium Pro",   //or Pentium-M/Woodcrest depeding on model
- 709   "",
+ 701 jlong VM_Version_Ext::maximum_qualified_cpu_frequency(void) {
+ 702   if (_max_qualified_cpu_frequency == 0) {
+ 703     _max_qualified_cpu_frequency = max_qualified_cpu_freq_from_brand_string();
+ 704   }
+ 705   return _max_qualified_cpu_frequency;
+ 706 }
+ 707 
+ 708 const char* const VM_Version_Ext::_family_id_intel[] = {
+ 709   "8086/8088",
  710   "",
- 711   "",
- 712   "",
- 713   "",
- 714   "",
- 715   "",
+ 711   "286",
+ 712   "386",
+ 713   "486",
+ 714   "Pentium",
+ 715   "Pentium Pro",   //or Pentium-M/Woodcrest depeding on model
  716   "",
- 717   "Pentium 4"
- 718 };
- 719 
- 720 const char* const VM_Version_Ext::_family_id_amd[] = {
+ 717   "",
+ 718   "",
+ 719   "",
+ 720   "",
  721   "",
  722   "",
  723   "",
- 724   "",
- 725   "5x86",
- 726   "K5/K6",
- 727   "Athlon/AthlonXP",
+ 724   "Pentium 4"
+ 725 };
+ 726 
+ 727 const char* const VM_Version_Ext::_family_id_amd[] = {
  728   "",
  729   "",
  730   "",
  731   "",
- 732   "",
- 733   "",
- 734   "",
+ 732   "5x86",
+ 733   "K5/K6",
+ 734   "Athlon/AthlonXP",
  735   "",
- 736   "Opteron/Athlon64",
- 737   "Opteron QC/Phenom"  // Barcelona et.al.
- 738 };
- 739 // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
- 740 // September 2013, Vol 3C Table 35-1
- 741 const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
+ 736   "",
+ 737   "",
+ 738   "",
+ 739   "",
+ 740   "",
+ 741   "",
  742   "",
- 743   "Pentium Pro",
- 744   "",
- 745   "Pentium II model 3",
- 746   "",
- 747   "Pentium II model 5/Xeon/Celeron",
- 748   "Celeron",
- 749   "Pentium III/Pentium III Xeon",
- 750   "Pentium III/Pentium III Xeon",
- 751   "Pentium M model 9",    // Yonah
- 752   "Pentium III, model A",
- 753   "Pentium III, model B",
+ 743   "Opteron/Athlon64",
+ 744   "Opteron QC/Phenom"  // Barcelona et.al.
+ 745 };
+ 746 const char* const VM_Version_Ext::_family_id_hygon[] = {
+ 747   "",   //family 0
+ 748   "",
+ 749   "",
+ 750   "",
+ 751   "",
+ 752   "",
+ 753   "",
  754   "",
- 755   "Pentium M model D",    // Dothan
+ 755   "",
  756   "",
- 757   "Core 2",               // 0xf Woodcrest/Conroe/Merom/Kentsfield/Clovertown
+ 757   "",
  758   "",
  759   "",
  760   "",
  761   "",
  762   "",
  763   "",
- 764   "Celeron",              // 0x16 Celeron 65nm
- 765   "Core 2",               // 0x17 Penryn / Harpertown
+ 764   "",
+ 765   "",
  766   "",
  767   "",
- 768   "Core i7",              // 0x1A CPU_MODEL_NEHALEM_EP
- 769   "Atom",                 // 0x1B Z5xx series Silverthorn
+ 768   "",
+ 769   "",
  770   "",
- 771   "Core 2",               // 0x1D Dunnington (6-core)
- 772   "Nehalem",              // 0x1E CPU_MODEL_NEHALEM
- 773   "",
- 774   "",
- 775   "",
- 776   "",
+ 771   "HygonGenuine",       //family 24
+ 772 };
+ 773 
+ 774 // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+ 775 // September 2013, Vol 3C Table 35-1
+ 776 const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
  777   "",
- 778   "",
- 779   "Westmere",             // 0x25 CPU_MODEL_WESTMERE
- 780   "",
+ 778   "Pentium Pro",
+ 779   "",
+ 780   "Pentium II model 3",
  781   "",
- 782   "",                     // 0x28
- 783   "",
- 784   "Sandy Bridge",         // 0x2a "2nd Generation Intel Core i7, i5, i3"
- 785   "",
- 786   "Westmere-EP",          // 0x2c CPU_MODEL_WESTMERE_EP
- 787   "Sandy Bridge-EP",      // 0x2d CPU_MODEL_SANDYBRIDGE_EP
- 788   "Nehalem-EX",           // 0x2e CPU_MODEL_NEHALEM_EX
- 789   "Westmere-EX",          // 0x2f CPU_MODEL_WESTMERE_EX
- 790   "",
+ 782   "Pentium II model 5/Xeon/Celeron",
+ 783   "Celeron",
+ 784   "Pentium III/Pentium III Xeon",
+ 785   "Pentium III/Pentium III Xeon",
+ 786   "Pentium M model 9",    // Yonah
+ 787   "Pentium III, model A",
+ 788   "Pentium III, model B",
+ 789   "",
+ 790   "Pentium M model D",    // Dothan
  791   "",
- 792   "",
+ 792   "Core 2",               // 0xf Woodcrest/Conroe/Merom/Kentsfield/Clovertown
  793   "",
  794   "",
  795   "",
  796   "",
  797   "",
  798   "",
- 799   "",
- 800   "Ivy Bridge",           // 0x3a
+ 799   "Celeron",              // 0x16 Celeron 65nm
+ 800   "Core 2",               // 0x17 Penryn / Harpertown
  801   "",
- 802   "Haswell",              // 0x3c "4th Generation Intel Core Processor"
- 803   "",                     // 0x3d "Next Generation Intel Core Processor"
- 804   "Ivy Bridge-EP",        // 0x3e "Next Generation Intel Xeon Processor E7 Family"
- 805   "",                     // 0x3f "Future Generation Intel Xeon Processor"
- 806   "",
- 807   "",
+ 802   "",
+ 803   "Core i7",              // 0x1A CPU_MODEL_NEHALEM_EP
+ 804   "Atom",                 // 0x1B Z5xx series Silverthorn
+ 805   "",
+ 806   "Core 2",               // 0x1D Dunnington (6-core)
+ 807   "Nehalem",              // 0x1E CPU_MODEL_NEHALEM
  808   "",
  809   "",
  810   "",
- 811   "Haswell",              // 0x45 "4th Generation Intel Core Processor"
- 812   "Haswell",              // 0x46 "4th Generation Intel Core Processor"
- 813   NULL
- 814 };
- 815 
- 816 /* Brand ID is for back compability
- 817  * Newer CPUs uses the extended brand string */
- 818 const char* const VM_Version_Ext::_brand_id[] = {
- 819   "",
- 820   "Celeron processor",
- 821   "Pentium III processor",
- 822   "Intel Pentium III Xeon processor",
- 823   "",
- 824   "",
+ 811   "",
+ 812   "",
+ 813   "",
+ 814   "Westmere",             // 0x25 CPU_MODEL_WESTMERE
+ 815   "",
+ 816   "",
+ 817   "",                     // 0x28
+ 818   "",
+ 819   "Sandy Bridge",         // 0x2a "2nd Generation Intel Core i7, i5, i3"
+ 820   "",
+ 821   "Westmere-EP",          // 0x2c CPU_MODEL_WESTMERE_EP
+ 822   "Sandy Bridge-EP",      // 0x2d CPU_MODEL_SANDYBRIDGE_EP
+ 823   "Nehalem-EX",           // 0x2e CPU_MODEL_NEHALEM_EX
+ 824   "Westmere-EX",          // 0x2f CPU_MODEL_WESTMERE_EX
  825   "",
  826   "",
- 827   "Intel Pentium 4 processor",
- 828   NULL
- 829 };
- 830 
- 831 
- 832 const char* const VM_Version_Ext::_feature_edx_id[] = {
- 833   "On-Chip FPU",
- 834   "Virtual Mode Extensions",
- 835   "Debugging Extensions",
- 836   "Page Size Extensions",
- 837   "Time Stamp Counter",
- 838   "Model Specific Registers",
- 839   "Physical Address Extension",
- 840   "Machine Check Exceptions",
- 841   "CMPXCHG8B Instruction",
- 842   "On-Chip APIC",
+ 827   "",
+ 828   "",
+ 829   "",
+ 830   "",
+ 831   "",
+ 832   "",
+ 833   "",
+ 834   "",
+ 835   "Ivy Bridge",           // 0x3a
+ 836   "",
+ 837   "Haswell",              // 0x3c "4th Generation Intel Core Processor"
+ 838   "",                     // 0x3d "Next Generation Intel Core Processor"
+ 839   "Ivy Bridge-EP",        // 0x3e "Next Generation Intel Xeon Processor E7 Family"
+ 840   "",                     // 0x3f "Future Generation Intel Xeon Processor"
+ 841   "",
+ 842   "",
  843   "",
- 844   "Fast System Call",
- 845   "Memory Type Range Registers",
- 846   "Page Global Enable",
- 847   "Machine Check Architecture",
- 848   "Conditional Mov Instruction",
- 849   "Page Attribute Table",
- 850   "36-bit Page Size Extension",
- 851   "Processor Serial Number",
- 852   "CLFLUSH Instruction",
- 853   "",
- 854   "Debug Trace Store feature",
- 855   "ACPI registers in MSR space",
- 856   "Intel Architecture MMX Technology",
- 857   "Fast Float Point Save and Restore",
- 858   "Streaming SIMD extensions",
- 859   "Streaming SIMD extensions 2",
- 860   "Self-Snoop",
- 861   "Hyper Threading",
- 862   "Thermal Monitor",
- 863   "",
- 864   "Pending Break Enable"
- 865 };
+ 844   "",
+ 845   "",
+ 846   "Haswell",              // 0x45 "4th Generation Intel Core Processor"
+ 847   "Haswell",              // 0x46 "4th Generation Intel Core Processor"
+ 848   NULL
+ 849 };
+ 850 
+ 851 /* Brand ID is for back compability
+ 852  * Newer CPUs uses the extended brand string */
+ 853 const char* const VM_Version_Ext::_brand_id[] = {
+ 854   "",
+ 855   "Celeron processor",
+ 856   "Pentium III processor",
+ 857   "Intel Pentium III Xeon processor",
+ 858   "",
+ 859   "",
+ 860   "",
+ 861   "",
+ 862   "Intel Pentium 4 processor",
+ 863   NULL
+ 864 };
+ 865 
  866 
- 867 const char* const VM_Version_Ext::_feature_extended_edx_id[] = {
- 868   "",
- 869   "",
- 870   "",
- 871   "",
- 872   "",
- 873   "",
- 874   "",
- 875   "",
- 876   "",
- 877   "",
+ 867 const char* const VM_Version_Ext::_feature_edx_id[] = {
+ 868   "On-Chip FPU",
+ 869   "Virtual Mode Extensions",
+ 870   "Debugging Extensions",
+ 871   "Page Size Extensions",
+ 872   "Time Stamp Counter",
+ 873   "Model Specific Registers",
+ 874   "Physical Address Extension",
+ 875   "Machine Check Exceptions",
+ 876   "CMPXCHG8B Instruction",
+ 877   "On-Chip APIC",
  878   "",
- 879   "SYSCALL/SYSRET",
- 880   "",
- 881   "",
- 882   "",
- 883   "",
- 884   "",
- 885   "",
- 886   "",
- 887   "",
- 888   "Execute Disable Bit",
- 889   "",
- 890   "",
- 891   "",
- 892   "",
- 893   "",
- 894   "",
- 895   "RDTSCP",
- 896   "",
- 897   "Intel 64 Architecture",
+ 879   "Fast System Call",
+ 880   "Memory Type Range Registers",
+ 881   "Page Global Enable",
+ 882   "Machine Check Architecture",
+ 883   "Conditional Mov Instruction",
+ 884   "Page Attribute Table",
+ 885   "36-bit Page Size Extension",
+ 886   "Processor Serial Number",
+ 887   "CLFLUSH Instruction",
+ 888   "",
+ 889   "Debug Trace Store feature",
+ 890   "ACPI registers in MSR space",
+ 891   "Intel Architecture MMX Technology",
+ 892   "Fast Float Point Save and Restore",
+ 893   "Streaming SIMD extensions",
+ 894   "Streaming SIMD extensions 2",
+ 895   "Self-Snoop",
+ 896   "Hyper Threading",
+ 897   "Thermal Monitor",
  898   "",
- 899   ""
+ 899   "Pending Break Enable"
  900 };
  901 
- 902 const char* const VM_Version_Ext::_feature_ecx_id[] = {
- 903   "Streaming SIMD Extensions 3",
- 904   "PCLMULQDQ",
- 905   "64-bit DS Area",
- 906   "MONITOR/MWAIT instructions",
- 907   "CPL Qualified Debug Store",
- 908   "Virtual Machine Extensions",
- 909   "Safer Mode Extensions",
- 910   "Enhanced Intel SpeedStep technology",
- 911   "Thermal Monitor 2",
- 912   "Supplemental Streaming SIMD Extensions 3",
- 913   "L1 Context ID",
- 914   "",
- 915   "Fused Multiply-Add",
- 916   "CMPXCHG16B",
- 917   "xTPR Update Control",
- 918   "Perfmon and Debug Capability",
+ 902 const char* const VM_Version_Ext::_feature_extended_edx_id[] = {
+ 903   "",
+ 904   "",
+ 905   "",
+ 906   "",
+ 907   "",
+ 908   "",
+ 909   "",
+ 910   "",
+ 911   "",
+ 912   "",
+ 913   "",
+ 914   "SYSCALL/SYSRET",
+ 915   "",
+ 916   "",
+ 917   "",
+ 918   "",
  919   "",
- 920   "Process-context identifiers",
- 921   "Direct Cache Access",
- 922   "Streaming SIMD extensions 4.1",
- 923   "Streaming SIMD extensions 4.2",
- 924   "x2APIC",
- 925   "MOVBE",
- 926   "Popcount instruction",
- 927   "TSC-Deadline",
- 928   "AESNI",
- 929   "XSAVE",
- 930   "OSXSAVE",
- 931   "AVX",
- 932   "F16C",
- 933   "RDRAND",
+ 920   "",
+ 921   "",
+ 922   "",
+ 923   "Execute Disable Bit",
+ 924   "",
+ 925   "",
+ 926   "",
+ 927   "",
+ 928   "",
+ 929   "",
+ 930   "RDTSCP",
+ 931   "",
+ 932   "Intel 64 Architecture",
+ 933   "",
  934   ""
  935 };
  936 
- 937 const char* const VM_Version_Ext::_feature_extended_ecx_id[] = {
- 938   "LAHF/SAHF instruction support",
- 939   "Core multi-processor leagacy mode",
- 940   "",
- 941   "",
- 942   "",
- 943   "Advanced Bit Manipulations: LZCNT",
- 944   "SSE4A: MOVNTSS, MOVNTSD, EXTRQ, INSERTQ",
- 945   "Misaligned SSE mode",
- 946   "",
- 947   "",
- 948   "",
+ 937 const char* const VM_Version_Ext::_feature_ecx_id[] = {
+ 938   "Streaming SIMD Extensions 3",
+ 939   "PCLMULQDQ",
+ 940   "64-bit DS Area",
+ 941   "MONITOR/MWAIT instructions",
+ 942   "CPL Qualified Debug Store",
+ 943   "Virtual Machine Extensions",
+ 944   "Safer Mode Extensions",
+ 945   "Enhanced Intel SpeedStep technology",
+ 946   "Thermal Monitor 2",
+ 947   "Supplemental Streaming SIMD Extensions 3",
+ 948   "L1 Context ID",
  949   "",
- 950   "",
- 951   "",
- 952   "",
- 953   "",
+ 950   "Fused Multiply-Add",
+ 951   "CMPXCHG16B",
+ 952   "xTPR Update Control",
+ 953   "Perfmon and Debug Capability",
  954   "",
- 955   "",
- 956   "",
- 957   "",
- 958   "",
- 959   "",
- 960   "",
- 961   "",
- 962   "",
- 963   "",
- 964   "",
- 965   "",
- 966   "",
- 967   "",
- 968   "",
+ 955   "Process-context identifiers",
+ 956   "Direct Cache Access",
+ 957   "Streaming SIMD extensions 4.1",
+ 958   "Streaming SIMD extensions 4.2",
+ 959   "x2APIC",
+ 960   "MOVBE",
+ 961   "Popcount instruction",
+ 962   "TSC-Deadline",
+ 963   "AESNI",
+ 964   "XSAVE",
+ 965   "OSXSAVE",
+ 966   "AVX",
+ 967   "F16C",
+ 968   "RDRAND",
  969   ""
  970 };
+ 971 
+ 972 const char* const VM_Version_Ext::_feature_extended_ecx_id[] = {
+ 973   "LAHF/SAHF instruction support",
+ 974   "Core multi-processor leagacy mode",
+ 975   "",
+ 976   "",
+ 977   "",
+ 978   "Advanced Bit Manipulations: LZCNT",
+ 979   "SSE4A: MOVNTSS, MOVNTSD, EXTRQ, INSERTQ",
+ 980   "Misaligned SSE mode",
+ 981   "",
+ 982   "",
+ 983   "",
+ 984   "",
+ 985   "",
+ 986   "",
+ 987   "",
+ 988   "",
+ 989   "",
+ 990   "",
+ 991   "",
+ 992   "",
+ 993   "",
+ 994   "",
+ 995   "",
+ 996   "",
+ 997   "",
+ 998   "",
+ 999   "",
+1000   "",
+1001   "",
+1002   "",
+1003   "",
+1004   ""
+1005 };
 </pre></body></html>

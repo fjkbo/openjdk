@@ -80,7 +80,7 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
 <title>jdk Cdiff src/hotspot/cpu/x86/vm_version_ext_x86.cpp</title>
 </head>
 <body id="SUNWwebrev">
-<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.cdiff.html' target='_top'>next &gt</a></center>
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.hpp.cdiff.html' target='_top'>next &gt</a></center>
 <h2>src/hotspot/cpu/x86/vm_version_ext_x86.cpp</h2>
         <a class="print" href="javascript:print()">Print this page</a>
 <pre></pre>
@@ -101,7 +101,78 @@ hr { border: none 0; border-top: 1px solid #aaa; height: 1px; }
   
   void VM_Version_Ext::resolve_cpu_information_details(void) {
   
+<hr /><span class="oldmarker">*** 405,414 ****</span>
+<span class="newmarker">--- 409,422 ----</span>
+      if (cpu_family_id == CPU_FAMILY_PENTIUMPRO) {
+        return cpu_model_description();
+      }
+      return _family_id_intel[cpu_family_id];
+    }
+<span class="new">+   if (is_hygon()) {</span>
+<span class="new">+     return _family_id_hygon[cpu_family_id];</span>
+<span class="new">+   }</span>
+<span class="new">+ </span>
+    return "Unknown x86";
+  }
+  
+  int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
+    assert(buf != NULL, "buffer is NULL!");
+<hr /><span class="oldmarker">*** 421,430 ****</span>
+<span class="newmarker">--- 429,441 ----</span>
+      cpu_type = "Intel";
+      x64 = cpu_is_em64t() ? " Intel64" : "";
+    } else if (is_amd()) {
+      cpu_type = "AMD";
+      x64 = cpu_is_em64t() ? " AMD64" : "";
+<span class="new">+   } else if (is_hygon()) {</span>
+<span class="new">+         cpu_type = "HYGON";</span>
+<span class="new">+         x64 = cpu_is_em64t() ? " AMD64" : "";</span>
+    } else {
+      cpu_type = "Unknown x86";
+      x64 = cpu_is_em64t() ? " x86_64" : "";
+    }
+  
+<hr /><span class="oldmarker">*** 730,739 ****</span>
+<span class="newmarker">--- 741,778 ----</span>
+    "",
+    "",
+    "Opteron/Athlon64",
+    "Opteron QC/Phenom"  // Barcelona et.al.
+  };
+<span class="new">+ const char* const VM_Version_Ext::_family_id_hygon[] = {</span>
+<span class="new">+   "",   //family 0</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "",</span>
+<span class="new">+   "HygonGenuine",       //family 24</span>
+<span class="new">+ };</span>
+<span class="new">+ </span>
+  // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+  // September 2013, Vol 3C Table 35-1
+  const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
+    "",
+    "Pentium Pro",
 </pre>
-<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_x86.cpp.cdiff.html' target='_top'>next &gt</a></center>
+<center><a href='../../../../src/hotspot/cpu/x86/assembler_x86.cpp.cdiff.html' target='_top'>&lt prev</a> <a href='../../../../index.html' target='_top'>index</a> <a href='../../../../src/hotspot/cpu/x86/vm_version_ext_x86.hpp.cdiff.html' target='_top'>next &gt</a></center>
 </body></html>
 

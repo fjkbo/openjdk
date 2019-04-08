@@ -1,0 +1,10 @@
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.hpp	2019-04-08 15:45:56.061755178 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.hpp	2019-04-08 15:45:55.793741437 +0800
+@@ -37,6 +37,7 @@
+ 
+   static const char* const _family_id_intel[];
+   static const char* const _family_id_amd[];
++  static const char* const _family_id_hygon[];
+   static const char* const _brand_id[];
+   static const char* const _model_id_pentium_pro[];
+ 

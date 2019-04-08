@@ -1,5 +1,5 @@
---- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.341473337 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.069463989 +0800
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-08 15:45:55.541728516 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-08 15:45:55.277714978 +0800
 @@ -340,6 +340,10 @@
      return !is_amd_Barcelona();
    }
@@ -11,3 +11,59 @@
    return false;
  }
  
+@@ -407,6 +411,10 @@
+     }
+     return _family_id_intel[cpu_family_id];
+   }
++  if (is_hygon()) {
++    return _family_id_hygon[cpu_family_id];
++  }
++
+   return "Unknown x86";
+ }
+ 
+@@ -423,6 +431,9 @@
+   } else if (is_amd()) {
+     cpu_type = "AMD";
+     x64 = cpu_is_em64t() ? " AMD64" : "";
++  } else if (is_hygon()) {
++  	cpu_type = "HYGON";
++	x64 = cpu_is_em64t() ? " AMD64" : "";
+   } else {
+     cpu_type = "Unknown x86";
+     x64 = cpu_is_em64t() ? " x86_64" : "";
+@@ -732,6 +743,34 @@
+   "Opteron/Athlon64",
+   "Opteron QC/Phenom"  // Barcelona et.al.
+ };
++const char* const VM_Version_Ext::_family_id_hygon[] = {
++  "",	//family 0
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "HygonGenuine",	//family 24
++};
++
+ // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+ // September 2013, Vol 3C Table 35-1
+ const char* const VM_Version_Ext::_model_id_pentium_pro[] = {

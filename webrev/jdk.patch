@@ -1,5 +1,5 @@
---- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-03 14:28:54.697451207 +0800
-+++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-03 14:28:54.425441860 +0800
+--- old/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-08 15:45:54.921696722 +0800
++++ new/src/hotspot/cpu/x86/assembler_x86.cpp	2019-04-08 15:45:54.653682974 +0800
 @@ -3099,7 +3099,7 @@
      }
      return;
@@ -9,8 +9,8 @@
      //
      // Using multi-bytes nops "0x0F 0x1F [address]" for AMD.
      //  1: 0x90
---- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.341473337 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-03 14:28:55.069463989 +0800
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-08 15:45:55.541728516 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.cpp	2019-04-08 15:45:55.277714978 +0800
 @@ -340,6 +340,10 @@
      return !is_amd_Barcelona();
    }
@@ -22,8 +22,74 @@
    return false;
  }
  
---- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.877491758 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.601482272 +0800
+@@ -407,6 +411,10 @@
+     }
+     return _family_id_intel[cpu_family_id];
+   }
++  if (is_hygon()) {
++    return _family_id_hygon[cpu_family_id];
++  }
++
+   return "Unknown x86";
+ }
+ 
+@@ -423,6 +431,9 @@
+   } else if (is_amd()) {
+     cpu_type = "AMD";
+     x64 = cpu_is_em64t() ? " AMD64" : "";
++  } else if (is_hygon()) {
++  	cpu_type = "HYGON";
++	x64 = cpu_is_em64t() ? " AMD64" : "";
+   } else {
+     cpu_type = "Unknown x86";
+     x64 = cpu_is_em64t() ? " x86_64" : "";
+@@ -732,6 +743,34 @@
+   "Opteron/Athlon64",
+   "Opteron QC/Phenom"  // Barcelona et.al.
+ };
++const char* const VM_Version_Ext::_family_id_hygon[] = {
++  "",	//family 0
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "",
++  "HygonGenuine",	//family 24
++};
++
+ // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
+ // September 2013, Vol 3C Table 35-1
+ const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
+--- old/src/hotspot/cpu/x86/vm_version_ext_x86.hpp	2019-04-08 15:45:56.061755178 +0800
++++ new/src/hotspot/cpu/x86/vm_version_ext_x86.hpp	2019-04-08 15:45:55.793741437 +0800
+@@ -37,6 +37,7 @@
+ 
+   static const char* const _family_id_intel[];
+   static const char* const _family_id_amd[];
++  static const char* const _family_id_hygon[];
+   static const char* const _brand_id[];
+   static const char* const _model_id_pentium_pro[];
+ 
+--- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-08 15:45:56.565781009 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-08 15:45:56.301767478 +0800
 @@ -1165,7 +1165,7 @@
      }
    }
@@ -44,8 +110,8 @@
        // On family 17h processors use XMM and UnalignedLoadStores for Array Copy
        if (supports_sse2() && FLAG_IS_DEFAULT(UseXMMForArrayCopy)) {
          FLAG_SET_DEFAULT(UseXMMForArrayCopy, true);
---- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.417510317 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-03 14:28:56.149501105 +0800
+--- old/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-08 15:45:57.097808271 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.hpp	2019-04-08 15:45:56.829794539 +0800
 @@ -495,13 +495,13 @@
        result |= CPU_CX8;
      if (_cpuid_info.std_cpuid1_edx.bits.cmov != 0)

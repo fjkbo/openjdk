@@ -1,5 +1,5 @@
---- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.877491758 +0800
-+++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-03 14:28:55.601482272 +0800
+--- old/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-08 15:45:56.565781009 +0800
++++ new/src/hotspot/cpu/x86/vm_version_x86.cpp	2019-04-08 15:45:56.301767478 +0800
 @@ -1165,7 +1165,7 @@
      }
    }

@@ -411,6 +411,10 @@ const char* VM_Version_Ext::cpu_family_description(void) {
     }
     return _family_id_intel[cpu_family_id];
   }
+  if (is_hygon()) {
+    return _family_id_hygon[cpu_family_id];
+  }
+
   return "Unknown x86";
 }
 
@@ -427,6 +431,9 @@ int VM_Version_Ext::cpu_type_description(char* const buf, size_t buf_len) {
   } else if (is_amd()) {
     cpu_type = "AMD";
     x64 = cpu_is_em64t() ? " AMD64" : "";
+  } else if (is_hygon()) {
+  	cpu_type = "HYGON";
+	x64 = cpu_is_em64t() ? " AMD64" : "";
   } else {
     cpu_type = "Unknown x86";
     x64 = cpu_is_em64t() ? " x86_64" : "";
@@ -736,6 +743,34 @@ const char* const VM_Version_Ext::_family_id_amd[] = {
   "Opteron/Athlon64",
   "Opteron QC/Phenom"  // Barcelona et.al.
 };
+const char* const VM_Version_Ext::_family_id_hygon[] = {
+  "",	//family 0
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "HygonGenuine",	//family 24
+};
+
 // Partially from Intel 64 and IA-32 Architecture Software Developer's Manual,
 // September 2013, Vol 3C Table 35-1
 const char* const VM_Version_Ext::_model_id_pentium_pro[] = {
